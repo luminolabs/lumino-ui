@@ -53,3 +53,5 @@ dist/
 build/
 
 repopack-output.txt
+.next
+.next/*
