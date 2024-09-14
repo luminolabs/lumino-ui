@@ -1,12 +1,14 @@
-// src/app/page.tsx (if you're using App Router)
+import { VStack, Heading, Text } from '@chakra-ui/react';
 
 export default function Home() {
   return (
-    <main className="flex flex-col items-center justify-center min-h-screen text-black">
-      <h1 className="text-3xl font-bold">Welcome to Lumino Dashboard</h1>
-      <p className="mt-4 text-gray-600">
+    <VStack spacing={4} align="center" justify="center" minHeight="calc(100vh - 64px - 56px)">
+      <Heading as="h1" size="xl" fontWeight="bold">
+        Welcome to Lumino Dashboard
+      </Heading>
+      <Text fontSize="lg" color="gray.600">
         This is your central dashboard for managing fine-tuning jobs, datasets, and usage.
-      </p>
-    </main>
+      </Text>
+    </VStack>
   );
 }

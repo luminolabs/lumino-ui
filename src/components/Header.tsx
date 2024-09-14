@@ -1,30 +1,32 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import logo from '../../public/logo.svg'; // Assuming the logo is in .png format
+import { Box, Flex, Spacer, Link as ChakraLink } from '@chakra-ui/react';
+import logo from '../../public/logo.svg';
 
 const Header = () => {
   return (
-    <header className="bg-white shadow-md py-6"> {/* Increased padding to make the header larger */}
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/">
+    <Box as="header" bg="white" boxShadow="md" py={6}>
+      <Flex maxW="container.xl" mx="auto" alignItems="center">
+        <Link href="/" passHref>
           <Image
             src={logo}
             alt="Lumino Logo"
-            width={160}         // Increase the logo size if needed
-            height={50}         // Adjust the height accordingly
+            width={160}
+            height={50}
             priority
           />
         </Link>
-        <nav className="flex space-x-8"> {/* Adjust space between links */}
-          <Link href="/dashboard" className="text-gray-600 hover:text-purple-600 text-lg"> {/* Increase text size */}
+        <Spacer />
+        <Flex as="nav" gap={8}>
+          <ChakraLink as={Link} href="/dashboard" color="gray.600" _hover={{ color: 'purple.600' }} fontSize="lg">
             Dashboard
-          </Link>
-          <Link href="/docs" className="text-gray-600 hover:text-purple-600 text-lg"> {/* Increase text size */}
+          </ChakraLink>
+          <ChakraLink as={Link} href="/docs" color="gray.600" _hover={{ color: 'purple.600' }} fontSize="lg">
             Docs
-          </Link>
-        </nav>
-      </div>
-    </header>
+          </ChakraLink>
+        </Flex>
+      </Flex>
+    </Box>
   );
 };
 
