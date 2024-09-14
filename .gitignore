@@ -51,3 +51,5 @@ pnpm-lock.yaml
 # Custom build artifacts
 dist/
 build/
+
+repopack-output.txt
