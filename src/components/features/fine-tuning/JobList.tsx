@@ -18,7 +18,8 @@ const JobList = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=10');
+        const response = await fetch('http://localhost:5100/v1/fine-tuning?=null');
+        console.log(response)
         if (!response.ok) {
           throw new Error('Failed to fetch jobs');
         }
