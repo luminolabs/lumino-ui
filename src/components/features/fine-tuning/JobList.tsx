@@ -1,9 +1,42 @@
-import { VStack, Heading, Button, Box, Text } from '@chakra-ui/react';
-import { FiPlus } from "react-icons/fi";
+'use client'
+
+import { useState, useEffect } from 'react';
+import { VStack, Heading, Button, Box, Text, Spinner } from '@chakra-ui/react';
+import { FiPlus } from 'react-icons/fi';
 import Link from 'next/link';
 
+interface Job {
+  id: number;
+  title: string;  // We'll use this as the job name
+  userId: number; // We'll use this to generate a fake timestamp
+}
+
 const JobList = () => {
-  const jobs = ['Job 1', 'Job 2', 'Job 3', 'Job 4', 'Job 1', 'Job 2', 'Job 3', 'Job 4'];
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts?_limit=10');
+        if (!response.ok) {
+          throw new Error('Failed to fetch jobs');
+        }
+        const data: Job[] = await response.json();
+        setJobs(data);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
+  if (isLoading) {
+    return <Spinner />;
+  }
 
   return (
     <Box width="300px" pr={4}>
@@ -13,11 +46,13 @@ const JobList = () => {
           Create Job
         </Button>
         <VStack align="stretch" spacing={2}>
-          {jobs.map((job, index) => (
-            <Link key={index} href={`/fine-tuning/${index + 1}`} passHref>
+          {jobs.map((job) => (
+            <Link key={job.id} href={`/fine-tuning/${job.id}`} passHref>
               <Box p={2} bg="purple.50" borderRadius="md" cursor="pointer">
-                <Text>{job}</Text>
-                {index === 0 && <Text fontSize="sm" color="gray.500">9/23/2024, 3:27pm</Text>}
+                <Text>Job {job.id}: {job.title.slice(0, 20)}...</Text>
+                <Text fontSize="sm" color="gray.500">
+                  {new Date(2023, 0, job.userId).toLocaleString()}
+                </Text>
               </Box>
             </Link>
           ))}
