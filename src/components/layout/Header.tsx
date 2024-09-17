@@ -1,32 +1,31 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Box, Flex, Spacer, Link as ChakraLink } from '@chakra-ui/react';
-import logo from '../../../public/logo.svg';
+'use client'
+
+import { Box, Flex, Spacer, Link } from '@chakra-ui/react';
+import NextLink from 'next/link';
+import { FiClock } from 'react-icons/fi';
+import Icon from '@/components/common/Icon';
 
 const Header = () => {
   return (
-    <Box as="header" bg="white" boxShadow="md" py={6}>
-      <Flex maxW="container.xl" mx="auto" alignItems="center">
-        <Link href="/" passHref>
-          <Image
-            src={logo}
-            alt="Lumino Logo"
-            width={160}
-            height={50}
-            priority
-          />
-        </Link>
+    <Box as="header" bg="white" boxShadow="sm" py={4}>
+      <Flex maxW="container.xl" mx="auto" alignItems="center" px={4}>
+        <NextLink href="/" passHref>
+          <Flex as="a" alignItems="center">
+            <Icon as={FiClock} color="purple.500" fontSize="24px" mr={2} />
+            <Box as="span" fontSize="xl" fontWeight="bold" color="purple.700">
+              lumino
+            </Box>
+          </Flex>
+        </NextLink>
         <Spacer />
-        <Flex as="nav" gap={8}>
-          <ChakraLink as={Link} href="/dashboard" color="gray.800" _hover={{ color: 'brand.purple' }} fontSize="lg">
+        <Flex gap={6}>
+          <Link as={NextLink} href="/dashboard" color="gray.600">
             Dashboard
-          </ChakraLink>
-          <ChakraLink as={Link} href="/datasets" color="gray.800" _hover={{ color: 'brand.purple' }} fontSize="lg">
-            Datasets
-          </ChakraLink>
-          <ChakraLink as={Link} href="/fine-tuning" color="gray.800" _hover={{ color: 'brand.purple' }} fontSize="lg">
-            Fine-tuning
-          </ChakraLink>
+          </Link>
+          <Link as={NextLink} href="/docs" color="gray.600">
+            Docs
+          </Link>
+          <Icon as={FiClock} color="gray.600" fontSize="20px" />
         </Flex>
       </Flex>
     </Box>
