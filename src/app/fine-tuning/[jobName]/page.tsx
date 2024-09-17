@@ -3,14 +3,14 @@ import Sidebar from '@/components/layout/Sidebar';
 import JobList from '@/components/features/fine-tuning/JobList';
 import JobDetails from '@/components/features/fine-tuning/JobDetails';
 
-export default function JobPage({ params }: { params: { jobId: string } }) {
+export default function JobPage({ params }: { params: { jobName :string } }) {
   return (
     <Flex>
       <Sidebar />
       <Box flex={1} p={8}>
         <Flex>
           <JobList />
-          <JobDetails jobId={params.jobId} />
+          <JobDetails jobName={params.jobName} />
         </Flex>
       </Box>
     </Flex>
