@@ -12,9 +12,9 @@ export const colors = {
       2: '#885edd',
     },
     brand: {
-      purple: '#9065e6',
-      purpleHover: '#7a49dc',
-      purpleLight: '#d3c7f2',
+      purple: '#7C3AED',
+      purpleHover: '#6D28D9',
+      purpleLight: '#F3E8FF',
       purpleDark: '#24143f',
     },
     transparent: 'transparent',

@@ -1,17 +1,25 @@
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react';
-import { VStack, Box, Text, Spinner, useToast, Button } from '@chakra-ui/react';
-import Link from 'next/link';
-import { fetchWithAuth } from '@/utils/api';
+import { useState, useEffect } from "react";
+import {
+  VStack,
+  Box,
+  Text,
+  Spinner,
+  useToast,
+  Flex,
+  Button,
+  useBreakpointValue,
+} from "@chakra-ui/react";
+import Link from "next/link";
+import { fetchWithAuth } from "@/utils/api";
+import { useParams } from "next/navigation";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 interface Job {
   id: string;
   created_at: string;
-  updated_at: string;
-  name: string
-  // base_model_name: string;
-  // dataset_name: string;
+  name: string;
 }
 
 interface ApiResponse {
@@ -23,91 +31,94 @@ interface ApiResponse {
   };
 }
 
-const JobList = () => {
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
+  return (
+    <Box role="alert" p={4}>
+      <Text>Error loading job list:</Text>
+      <Text color="red.500">{error.message}</Text>
+      <Button onClick={resetErrorBoundary} mt={2}>
+        Try again
+      </Button>
+    </Box>
+  );
+}
+
+const JobListContent = () => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const params = useParams();
+  const selectedJobName = params?.jobName as string;
   const toast = useToast();
-
-  const fetchJobs = async (page: number) => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      const response: ApiResponse = await fetchWithAuth(`/fine-tuning?page=${page}`);
-      setJobs(response.data);
-      setCurrentPage(response.pagination.current_page);
-      setTotalPages(response.pagination.total_pages);
-    } catch (error) {
-      console.error('Error fetching jobs:', error);
-      setError(error instanceof Error ? error.message : 'An unknown error occurred');
-      toast({
-        title: 'Error fetching jobs',
-        description: error instanceof Error ? error.message : 'Please try again later.',
-        status: 'error',
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   useEffect(() => {
-    fetchJobs(1);
-  }, []);
+    const fetchJobs = async () => {
+      try {
+        setIsLoading(true);
+        const response: ApiResponse = await fetchWithAuth(
+          `/fine-tuning?page=${currentPage}`
+        );
+        setJobs(response.data);
+        setTotalPages(response.pagination.total_pages);
+      } catch (error) {
+        console.error("Error fetching jobs:", error);
+        toast({
+          title: "Error fetching jobs",
+          description: "Please try again later.",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchJobs();
+  }, [currentPage, toast]);
 
   if (isLoading) {
     return <Spinner />;
   }
 
-  if (error) {
-    return <Text color="red.500">Error: {error}</Text>;
-  }
-
   return (
-    <VStack align="stretch" spacing={4}>
+    <VStack align="stretch" spacing={0} height={isMobile ? "auto" : "100%"}>
       {jobs.map((job) => (
-        <Link key={job.name} href={`/fine-tuning/${job.name}`} passHref>
-          <Box 
-            p={3} 
-            bg="#F8F5FF" 
-            borderRadius="md" 
+        <Link key={job.id} href={`/fine-tuning/${job.name}`} passHref>
+          <Box
+            p={4}
+            bg={selectedJobName === job.name ? "#F3E8FF" : "transparent"}
+            borderLeft={
+              selectedJobName === job.name ? "4px solid #7C3AED" : "none"
+            }
             cursor="pointer"
-            _hover={{ bg: '#EFE9FF' }}
+            _hover={{ bg: "#F3E8FF" }}
           >
-            <Text color="#261641" fontWeight="medium">Job Name: {job.name}</Text>
-            <Text fontSize="sm" color="gray.500">
-              Created: {new Date(job.created_at).toLocaleString()}
-            </Text>
-            {/* <Text fontSize="sm" color="gray.500">
-              Base Model: {job.base_model_name}
+            <Text fontWeight="medium" color="#261641">
+              {job.name}
             </Text>
             <Text fontSize="sm" color="gray.500">
-              Dataset: {job.dataset_name}
-            </Text> */}
+              {new Date(job.created_at).toLocaleString()}
+            </Text>
           </Box>
         </Link>
       ))}
-      <Box>
-        <Button 
-          disabled={currentPage === 1} 
-          onClick={() => fetchJobs(currentPage - 1)}
-        >
-          Previous
-        </Button>
-        <Text display="inline" mx={2}>
+      <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
+        <Text fontSize="sm" color="gray.600">
           Page {currentPage} of {totalPages}
         </Text>
-        <Button 
-          disabled={currentPage === totalPages} 
-          onClick={() => fetchJobs(currentPage + 1)}
-        >
-          Next
-        </Button>
-      </Box>
+      </Flex>
     </VStack>
+  );
+};
+
+const JobList = () => {
+  return (
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <JobListContent />
+    </ErrorBoundary>
   );
 };
 

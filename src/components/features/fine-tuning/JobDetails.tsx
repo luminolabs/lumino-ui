@@ -1,34 +1,45 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Box, VStack, Heading, Text, Spinner, useToast } from '@chakra-ui/react';
+import { Box, Text, Spinner, useToast, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
 import { fetchWithAuth } from '@/utils/api';
 
 interface JobDetail {
   id: string;
-  name: string;
+  base_model_name: string;
   created_at: string;
-  updated_at: string;
-  user_id: string;
-  base_model_id: string;
-  dataset_id: string;
-  status: string;
-  current_step: number;
-  total_steps: number;
+  name: string;
   current_epoch: number;
-  total_epochs: number;
+  current_step: number;
+  dataset_name: string;
+  metrics: any;
   num_tokens: number;
+  parameters: {
+    batch_size: number;
+    shuffle: boolean;
+    use_lora: boolean;
+    use_qlora: boolean;
+    num_epochs: number;
+  }
+  status: string;
+  total_epochs: number;
+  total_steps:number;
 }
 
 const JobDetails = ({ jobName }: { jobName: string }) => {
   const [jobDetails, setJobDetails] = useState<JobDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
+  const columns = useBreakpointValue({ base: 1, md: 2 });
 
   useEffect(() => {
     const fetchJobDetails = async () => {
+      if (!jobName) return;
       try {
+        setIsLoading(true);
         const data = await fetchWithAuth(`/fine-tuning/${jobName}`);
+        console.log(data);
+        
         setJobDetails(data);
       } catch (error) {
         console.error('Error fetching job details:', error);
@@ -55,20 +66,33 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     return <Text>Job not found</Text>;
   }
 
+  const DetailItem = ({ label, value }: { label: string; value: string | number }) => (
+    <GridItem>
+      <Text fontWeight="semibold" color="gray.600">{label}</Text>
+      <Text color="gray.900">{value}</Text>
+    </GridItem>
+  );
+
   return (
     <Box>
-      <Heading size="lg" mb={4}>{jobDetails.name}</Heading>
-      <VStack align="start" spacing={2}>
-        <Text><strong>Name:</strong> {jobDetails.name}</Text>
-        <Text><strong>Created At:</strong> {new Date(jobDetails.created_at).toLocaleString()}</Text>
-        <Text><strong>Status:</strong> {jobDetails.status}</Text>
-        <Text><strong>Status:</strong> {jobDetails.status}</Text>
-        <Text><strong>Status:</strong> {jobDetails.status}</Text>
-        <Text><strong>Status:</strong> {jobDetails.status}</Text>
-        <Text><strong>Status:</strong> {jobDetails.status}</Text>
-        <Text><strong>Status:</strong> {jobDetails.status}</Text>
-        {/* Add more job details here */}
-      </VStack>
+      <Grid templateColumns={`repeat(${columns}, 1fr)`} gap={6}>
+        <DetailItem label="Name" value={jobDetails.name} />
+        <DetailItem label="Status" value={jobDetails.status} />
+        <DetailItem label="Base Model" value={jobDetails.base_model_name} />
+        <DetailItem label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
+        <DetailItem label="Current Epoch" value={jobDetails.current_epoch} />
+        <DetailItem label="Current Step" value={jobDetails.current_step} />
+        <DetailItem label="Dataset Name" value={jobDetails.dataset_name} />
+        <DetailItem label="Metrics" value={jobDetails.metrics} />
+        <DetailItem label="Number of Tokens" value={jobDetails.num_tokens} />
+        <DetailItem label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
+        <DetailItem label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
+        <DetailItem label="Batch Size" value={jobDetails.parameters.batch_size} />
+        <DetailItem label="Use lora" value={jobDetails.parameters.use_lora.toString()} />
+        <DetailItem label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} />
+        <DetailItem label="Total Epochs" value={jobDetails.total_epochs} />
+        <DetailItem label="Total Steps" value={jobDetails.total_steps} />
+      </Grid>
     </Box>
   );
 };

@@ -1,38 +1,45 @@
 'use client'
 
-import { Box, Heading, Button, Flex, Text } from '@chakra-ui/react';
+import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
-import JobList from '@/components/features/fine-tuning/JobList';
-import JobDetails from '@/components/features/fine-tuning/JobDetails';
+import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
+import { Suspense } from 'react';
+
+const JobList = dynamic(() => import('@/components/features/fine-tuning/JobList'), {
+  loading: () => <Spinner />,
+  ssr: false
+});
+
+const JobDetails = dynamic(() => import('@/components/features/fine-tuning/JobDetails'), {
+  loading: () => <Spinner />,
+  ssr: false
+});
 
 export default function FineTuningPage() {
   const params = useParams();
   const jobName = params?.jobName as string;
+  const isMobile = useBreakpointValue({ base: true, md: false });
 
   return (
-    <Box maxWidth="1200px" margin="0 auto">
-      <Flex justify="space-between" align="center" mb={6}>
-        <Heading size="xl" color="#261641">Fine-tuning Jobs</Heading>
+    <Box p={4} bg="gray.50" minH="calc(100vh - 64px)"> {/* Adjust 64px if your header height is different */}
+      <Flex mb={6} direction={isMobile ? "column" : "row"} justify="space-between" align={isMobile ? "stretch" : "center"}>
+        <Heading size="lg" color="#261641" mb={isMobile ? 4 : 0}>Fine-tuning</Heading>
         <Button 
           leftIcon={<FiPlus />}
-          bg="#E7E0FD" 
-          color="#6B46C1" 
-          _hover={{ bg: '#D3C7F2' }}
+          bg="#7C3AED" 
+          color="white" 
+          _hover={{ bg: '#6D28D9' }}
+          width={isMobile ? "100%" : "auto"}
         >
           Create Job
         </Button>
       </Flex>
-      <Flex>
-        <Box width="300px" mr={8}>
-          <JobList />
-        </Box>
-        <Box flex={1}>
-          {jobName ? (
-            <JobDetails jobName={jobName} />
-          ) : (
-            <Text>Select a job to view details</Text>
-          )}
+      <Flex direction={isMobile ? "column" : "row"}>
+        <Box width={isMobile ? "100%" : "300px"} bg="white" borderRadius="md" boxShadow="sm" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>
+          <Suspense fallback={<Spinner />}>
+            <JobList />
+          </Suspense>
         </Box>
       </Flex>
     </Box>
