@@ -41,6 +41,15 @@ export default function FineTuningPage() {
             <JobList />
           </Suspense>
         </Box>
+        <Box flex={1} bg="white" borderRadius="md" boxShadow="sm" p={6}>
+          <Suspense fallback={<Spinner />}>
+            {jobName ? (
+              <JobDetails jobName={jobName} />
+            ) : (
+              <Text color="gray.500">Select a job to view details</Text>
+            )}
+          </Suspense>
+        </Box>
       </Flex>
     </Box>
   );

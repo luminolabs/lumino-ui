@@ -1,10 +1,10 @@
 'use client'
 
-import { useState, useEffect } from 'react';
-import { VStack, Button, Collapse, Box } from '@chakra-ui/react';
+import { Box, VStack, Button, Collapse, Text } from '@chakra-ui/react';
 import { FiCpu, FiDatabase, FiBarChart2, FiSettings, FiChevronDown, FiChevronUp } from 'react-icons/fi';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState, useEffect } from 'react';
 
 const Sidebar = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
@@ -25,7 +25,7 @@ const Sidebar = () => {
   };
 
   return (
-    <Box width="200px" bg="#F1F0F5" height="100vh" p={4} overflowY="auto">
+    <Box width="200px" bg="gray.100" height="100%" p={4} overflowY="auto">
       <VStack align="stretch" spacing={2}>
         <Link href="/fine-tuning" passHref>
           <Button 
@@ -80,7 +80,7 @@ const Sidebar = () => {
         </Button>
         <Collapse in={isSettingsOpen}>
           <VStack align="stretch" pl={6} mt={2} spacing={2}>
-            <Link href="/settings" passHref>
+          <Link href="/settings" passHref>
               <Button as="a" variant="ghost" justifyContent="flex-start" size="sm" 
                 bg={pathname === '/settings' ? '#E7E0FD' : 'transparent'}
                 color={pathname === '/settings' ? '#6B46C1' : 'gray.600'}

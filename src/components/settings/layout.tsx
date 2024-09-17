@@ -1,5 +1,4 @@
 import { Box, Flex } from '@chakra-ui/react';
-import Sidebar from '@/components/layout/Sidebar';
 
 export default function SettingsLayout({
   children,
@@ -8,7 +7,6 @@ export default function SettingsLayout({
 }) {
   return (
     <Flex>
-      <Sidebar />
       <Box flex={1} p={8}>
         {children}
       </Box>

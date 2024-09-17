@@ -1,12 +1,12 @@
-import { Flex, Box } from '@chakra-ui/react';
-import { Providers } from './providers';
-import Header from '@/components/layout/Header';
-import Sidebar from '@/components/layout/Sidebar';
+"use client";
 
-export const metadata = {
-  title: 'Lumino Dashboard',
-  description: 'A dashboard for managing fine-tuning jobs and datasets',
-};
+import { ChakraProvider, Flex, Box } from "@chakra-ui/react";
+import { ErrorBoundary } from "react-error-boundary";
+import { Suspense } from "react";
+import theme from "../theme";
+import ErrorFallback from "@/components/ErrorFallback";
+import Sidebar from "@/components/layout/Sidebar";
+import Header from "@/components/layout/Header";
 
 export default function RootLayout({
   children,
@@ -16,17 +16,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Providers>
-          <Flex height="100vh">
-            <Sidebar />
-            <Flex direction="column" flex={1}>
-              <Header />
-              <Box as="main" flex={1} overflowY="auto" bg="gray.50" p={8}>
-                {children}
-              </Box>
-            </Flex>
-          </Flex>
-        </Providers>
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <Suspense fallback={<div>Loading...</div>}>
+            <ChakraProvider theme={theme}>
+              <Flex flexDirection="column" minHeight="100vh">
+                <Header />
+                <Flex flex={1}>
+                  <Sidebar />
+                  <Box as="main" flex={1} overflowX="hidden" overflowY="auto" bg="gray.50">
+                    {children}
+                  </Box>
+                </Flex>
+              </Flex>
+            </ChakraProvider>
+          </Suspense>
+        </ErrorBoundary>
       </body>
     </html>
   );
