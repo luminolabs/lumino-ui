@@ -15,6 +15,7 @@ import {
 import { FiCopy } from 'react-icons/fi';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { fetchWithAuth } from '@/utils/api';
 
 const APIKeySettings: React.FC = () => {
     const [apiKeys, setApiKeys] = useState<Array<{ name: string; expires_at: string; status: string }>>([]);
@@ -77,7 +78,9 @@ const APIKeySettings: React.FC = () => {
 
     const listApiKeys = async () => {
         try {
-            const response = await fetch('/v1/api-keys');
+            const response = await fetchWithAuth(
+                `/api-keys`
+              );
             if (response.ok) {
                 const data = await response.json();
                 setApiKeys(data.data);
