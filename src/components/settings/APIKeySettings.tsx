@@ -66,17 +66,6 @@ const APIKeySettings: React.FC = () => {
                 duration: 5000,
                 isClosable: true,
             });
-            // } else {
-            //     const errorData = await response.json();
-            //     console.error('Error creating API key:', errorData.message);
-            //     toast({
-            //         title: 'Error creating API key',
-            //         description: errorData.message,
-            //         status: 'error',
-            //         duration: 5000,
-            //         isClosable: true,
-            //     });
-            // }
         } catch (error) {
             console.error('Error creating API key:', error);
         }
@@ -86,13 +75,8 @@ const APIKeySettings: React.FC = () => {
         try {
             //debugger;
             const response = await fetchWithAuth(`/api-keys`);
-            //if (response.ok) {
-                //const data = await response.json();
                 console.log("Fetched API keys:", response); // Log the fetched data
                 setApiKeys(response?.data);
-            // } else {
-            //     console.error('Error fetching API keys');
-            // }
         } catch (error) {
             console.error('Error fetching API keys:', error);
         }
