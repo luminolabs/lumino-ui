@@ -26,6 +26,7 @@ import { fetchWithAuth } from "@/utils/api";
 interface CreateFineTunedModelModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onCreationSuccess: () => void;
 }
 
 interface BaseModel {
@@ -49,10 +50,8 @@ interface Datasets {
 const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   isOpen,
   onClose,
+  onCreationSuccess,
 }) => {
-  //   const [validationDataOption, setValidationDataOption] = useState<
-  //     "upload" | "select" | "none"
-  //   >("upload");
   const [baseModels, setBaseModels] = useState<BaseModel[]>([]);
   const [selectedBaseModel, setSelectedBaseModel] = useState<string>("");
   const [datasets, setDatasets] = useState<Datasets[]>([]);
@@ -65,7 +64,6 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   const [numEpochs, setNumEpochs] = useState<number>(1);
   const [useLora, setUseLora] = useState<boolean>(true);
   const [useQlora, setUseQlora] = useState<boolean>(false);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
@@ -112,8 +110,8 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
         duration: 5000,
         isClosable: true,
       });
+      onCreationSuccess();
       onClose();
-      // Optionally, you can trigger a refresh of the job list here
     } catch (error: any) {
       console.error("Error creating fine-tuning job:", error);
       toast({

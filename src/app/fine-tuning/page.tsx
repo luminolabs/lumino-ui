@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
@@ -23,6 +23,13 @@ export default function FineTuningPage() {
   const jobName = params?.jobName as string;
   const isMobile = useBreakpointValue({ base: true, md: false });
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleJobCreationSuccess = () => {
+    // Increment the refreshTrigger to cause a re-fetch in the DatasetList component
+    setRefreshTrigger(prev => prev + 1);
+  console.log('Dataset uploaded successfully. Refreshing list...');
+};
 
   return (
     <Box p={4} bg="gray.50" minH="calc(100vh - 64px)">
@@ -40,12 +47,12 @@ export default function FineTuningPage() {
         </Button>
       </Flex>
       <Flex direction={isMobile ? "column" : "row"}>
-        <Box width={isMobile ? "100%" : "300px"} bg="white" borderRadius="md" boxShadow="sm" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>
+        <Box width={isMobile ? "100%" : "35%"} bg="white" borderRadius="md" boxShadow="sm" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>
           <Suspense fallback={<Spinner />}>
-            <JobList />
+            <JobList  refreshTrigger={refreshTrigger} />
           </Suspense>
         </Box>
-        <Box flex={1} bg="white" borderRadius="md" boxShadow="sm" p={6}>
+        <Box flex={1} bg="white" borderRadius="md" boxShadow="sm" p={6} width={isMobile ? "100%" : "35%"}>
           <Suspense fallback={<Spinner />}>
             {jobName ? (
               <JobDetails jobName={jobName} />
@@ -55,7 +62,7 @@ export default function FineTuningPage() {
           </Suspense>
         </Box>
       </Flex>
-      <CreateFineTunedModelModal isOpen={isOpen} onClose={onClose} />
+      <CreateFineTunedModelModal isOpen={isOpen} onClose={onClose} onCreationSuccess={handleJobCreationSuccess}/>
     </Box>
   );
 }

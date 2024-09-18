@@ -31,6 +31,10 @@ interface ApiResponse {
   };
 }
 
+interface JobListContentProps {
+  refreshTrigger: number;
+}
+
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <Box role="alert" p={4}>
@@ -43,7 +47,7 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   );
 }
 
-const JobListContent = () => {
+const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,7 +81,7 @@ const JobListContent = () => {
     };
 
     fetchJobs();
-  }, [currentPage, toast]);
+  }, [currentPage, toast, refreshTrigger]);
 
   if (isLoading) {
     return <Spinner />;
@@ -96,28 +100,38 @@ const JobListContent = () => {
             cursor="pointer"
             _hover={{ bg: "#F3E8FF" }}
           >
-            <Text fontWeight="medium" color="#261641">
-              {job.name}
-            </Text>
-            <Text fontSize="sm" color="gray.500">
-              {new Date(job.created_at).toLocaleString()}
-            </Text>
+            <Flex justify="space-between" alignItems="center">
+              <Text fontWeight="medium" color="#261641">
+                {job.name}
+              </Text>
+              <Text fontSize="sm" color="gray.500" ml={4}>
+                {new Date(job.created_at).toLocaleString()}
+              </Text>
+            </Flex>
           </Box>
         </Link>
       ))}
       <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
         <Text fontSize="sm" color="gray.600">
-          Page {currentPage} of {totalPages}
+          {totalPages == 0 ? 
+            `Page 0 of 0` :
+            `Page ${currentPage} of ${totalPages}`
+          }
         </Text>
       </Flex>
     </VStack>
   );
 };
 
-const JobList = () => {
+interface JobListProps {
+  refreshTrigger: number;
+}
+
+
+const JobList: React.FC<JobListProps> = ({ refreshTrigger }) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <JobListContent />
+      <JobListContent refreshTrigger={refreshTrigger} />
     </ErrorBoundary>
   );
 };
