@@ -38,8 +38,6 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
       try {
         setIsLoading(true);
         const data = await fetchWithAuth(`/fine-tuning/${jobName}`);
-        console.log(data);
-        
         setJobDetails(data);
       } catch (error) {
         console.error('Error fetching job details:', error);
