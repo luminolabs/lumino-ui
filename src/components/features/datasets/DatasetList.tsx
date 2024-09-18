@@ -33,13 +33,13 @@ interface ApiResponse {
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
-    <Box role="alert" p={4}>
-      <Text>Error loading dataset list:</Text>
-      <Text color="red.500">{error.message}</Text>
-      <Button onClick={resetErrorBoundary} mt={2}>
-        Try again
-      </Button>
-    </Box>
+      <Box role="alert" p={4}>
+        <Text>Error loading dataset list:</Text>
+        <Text color="red.500">{error.message}</Text>
+        <Button onClick={resetErrorBoundary} mt={2}>
+          Try again
+        </Button>
+      </Box>
   );
 }
 
@@ -64,7 +64,7 @@ const DatasetListContent: React.FC<DatasetListContentProps> = ({
       try {
         setIsLoading(true);
         const response: ApiResponse = await fetchWithAuth(
-          `/datasets?page=${currentPage}`
+            `/datasets?page=${currentPage}`
         );
         setDatasets(response.data);
         console.log(response.data);
