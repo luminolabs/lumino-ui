@@ -43,37 +43,40 @@ const APIKeySettings: React.FC = () => {
         }
 
         try {
-            const response = await fetch('/v1/api-keys', {
+            const response = await fetchWithAuth('/api-keys', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name: newKeyName, expires_at: newKeyExpiration.toISOString() }),
             });
 
-            if (response.ok) {
-                const data = await response.json();
-                setNewApiKeySecret(data.secret);
-                setNewKeyName('');
-                setNewKeyExpiration(null);
-                console.log("API key created successfully:", data.secret);
-                listApiKeys();
-                toast({
-                    title: 'API Key Created',
-                    description: 'Please save the new API key secret now.',
-                    status: 'success',
-                    duration: 5000,
-                    isClosable: true,
-                });
-            } else {
-                const errorData = await response.json();
-                console.error('Error creating API key:', errorData.message);
-                toast({
-                    title: 'Error creating API key',
-                    description: errorData.message,
-                    status: 'error',
-                    duration: 5000,
-                    isClosable: true,
-                });
-            }
+            // if (response.ok) {
+
+            debugger;
+            console.log("Response from create API key:", response);
+            const data = await response;
+            setNewApiKeySecret(data.secret);
+            setNewKeyName('');
+            setNewKeyExpiration(null);
+            console.log("API key created successfully:", data.secret);
+            listApiKeys();
+            toast({
+                title: 'API Key Created',
+                description: 'Please save the new API key secret now.',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+            // } else {
+            //     const errorData = await response.json();
+            //     console.error('Error creating API key:', errorData.message);
+            //     toast({
+            //         title: 'Error creating API key',
+            //         description: errorData.message,
+            //         status: 'error',
+            //         duration: 5000,
+            //         isClosable: true,
+            //     });
+            // }
         } catch (error) {
             console.error('Error creating API key:', error);
         }
