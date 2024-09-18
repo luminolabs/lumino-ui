@@ -43,7 +43,13 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   );
 }
 
-const DatasetListContent = () => {
+interface DatasetListContentProps {
+  refreshTrigger: number;
+}
+
+const DatasetListContent: React.FC<DatasetListContentProps> = ({
+  refreshTrigger,
+}) => {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,6 +67,8 @@ const DatasetListContent = () => {
           `/datasets?page=${currentPage}`
         );
         setDatasets(response.data);
+        console.log(response.data);
+        
         setTotalPages(response.pagination.total_pages);
       } catch (error) {
         console.error("Error fetching datasets:", error);
@@ -77,7 +85,7 @@ const DatasetListContent = () => {
     };
 
     fetchDatasets();
-  }, [currentPage, toast]);
+  }, [currentPage, toast, refreshTrigger]);
 
   if (isLoading) {
     return <Spinner />;
@@ -89,9 +97,13 @@ const DatasetListContent = () => {
         <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
           <Box
             p={4}
-            bg={selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"}
+            bg={
+              selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"
+            }
             borderLeft={
-              selectedDatasetName === dataset.name ? "4px solid #7C3AED" : "none"
+              selectedDatasetName === dataset.name
+                ? "4px solid #7C3AED"
+                : "none"
             }
             cursor="pointer"
             _hover={{ bg: "#F3E8FF" }}
@@ -114,10 +126,14 @@ const DatasetListContent = () => {
   );
 };
 
-const DatasetList = () => {
+interface DatasetListProps {
+  refreshTrigger: number;
+}
+
+const DatasetList: React.FC<DatasetListProps> = ({ refreshTrigger }) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <DatasetListContent />
+      <DatasetListContent refreshTrigger={refreshTrigger} />
     </ErrorBoundary>
   );
 };
