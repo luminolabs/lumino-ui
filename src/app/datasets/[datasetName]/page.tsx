@@ -1,12 +1,10 @@
 'use client'
 
-import React from 'react';
-import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue } from '@chakra-ui/react';
 import { FiPlus } from 'react-icons/fi';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import { Suspense } from 'react';
-import UploadDatasetModal from '@/components/features/datasets/UploadDatasetModal';
 
 const DatasetList = dynamic(() => import('@/components/features/datasets/DatasetList'), {
   loading: () => <Spinner />,
@@ -18,14 +16,13 @@ const DatasetDetails = dynamic(() => import('@/components/features/datasets/Data
   ssr: false
 });
 
-export default function FineTuningPage() {
+export default function DatasetDetailsPage() {
   const params = useParams();
   const datasetName = params?.datasetName as string;
   const isMobile = useBreakpointValue({ base: true, md: false });
-  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box p={4} bg="gray.50" minH="calc(100vh - 64px)">
+    <Box p={4} bg="gray.50" minH="calc(100vh - 64px)"> {/* Adjust 64px if your header height is different */}
       <Flex mb={6} direction={isMobile ? "column" : "row"} justify="space-between" align={isMobile ? "stretch" : "center"}>
         <Heading size="lg" color="#261641" mb={isMobile ? 4 : 0}>Datasets</Heading>
         <Button 
@@ -34,7 +31,6 @@ export default function FineTuningPage() {
           color="white" 
           _hover={{ bg: '#6D28D9' }}
           width={isMobile ? "100%" : "auto"}
-          onClick={onOpen}
         >
           Upload Dataset
         </Button>
@@ -55,7 +51,6 @@ export default function FineTuningPage() {
           </Suspense>
         </Box>
       </Flex>
-      <UploadDatasetModal isOpen={isOpen} onClose={onClose} />
     </Box>
   );
 }
