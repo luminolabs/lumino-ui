@@ -33,13 +33,13 @@ interface ApiResponse {
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
-    <Box role="alert" p={4}>
-      <Text>Error loading dataset list:</Text>
-      <Text color="red.500">{error.message}</Text>
-      <Button onClick={resetErrorBoundary} mt={2}>
-        Try again
-      </Button>
-    </Box>
+      <Box role="alert" p={4}>
+        <Text>Error loading dataset list:</Text>
+        <Text color="red.500">{error.message}</Text>
+        <Button onClick={resetErrorBoundary} mt={2}>
+          Try again
+        </Button>
+      </Box>
   );
 }
 
@@ -58,7 +58,7 @@ const DatasetListContent = () => {
       try {
         setIsLoading(true);
         const response: ApiResponse = await fetchWithAuth(
-          `/datasets?page=${currentPage}`
+            `/datasets?page=${currentPage}`
         );
         setDatasets(response.data);
         setTotalPages(response.pagination.total_pages);
@@ -84,41 +84,43 @@ const DatasetListContent = () => {
   }
 
   return (
-    <VStack align="stretch" spacing={0} height={isMobile ? "auto" : "100%"}>
-      {datasets.map((dataset) => (
-        <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
-          <Box
-            p={4}
-            bg={selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"}
-            borderLeft={
-              selectedDatasetName === dataset.name ? "4px solid #7C3AED" : "none"
-            }
-            cursor="pointer"
-            _hover={{ bg: "#F3E8FF" }}
-          >
-            <Text fontWeight="medium" color="#261641">
-              {dataset.name}
-            </Text>
-            <Text fontSize="sm" color="gray.500">
-              {new Date(dataset.created_at).toLocaleString()}
-            </Text>
-          </Box>
-        </Link>
-      ))}
-      <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
-        <Text fontSize="sm" color="gray.600">
-          Page {currentPage} of {totalPages}
-        </Text>
-      </Flex>
-    </VStack>
+      <VStack align="stretch" spacing={0} height={isMobile ? "auto" : "100%"}>
+        {datasets.map((dataset) => (
+            <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
+              <Box
+                  p={4}
+                  bg={selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"}
+                  borderLeft={
+                    selectedDatasetName === dataset.name ? "4px solid #7C3AED" : "none"
+                  }
+                  cursor="pointer"
+                  _hover={{ bg: "#F3E8FF" }}
+              >
+                <Flex justify="space-between" align="center" whiteSpace="nowrap">
+                  <Text fontWeight="medium" color="#261641" isTruncated>
+                    {dataset.name}
+                  </Text>
+                  <Text fontSize="sm" color="gray.500" isTruncated>
+                    {new Date(dataset.created_at).toLocaleString()}
+                  </Text>
+                </Flex>
+              </Box>
+            </Link>
+        ))}
+        <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
+          <Text fontSize="sm" color="gray.600">
+            Page {currentPage} of {totalPages}
+          </Text>
+        </Flex>
+      </VStack>
   );
 };
 
 const DatasetList = () => {
   return (
-    <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <DatasetListContent />
-    </ErrorBoundary>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
+        <DatasetListContent />
+      </ErrorBoundary>
   );
 };
 
