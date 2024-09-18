@@ -7,7 +7,7 @@ import { fetchWithAuth } from '@/utils/api';
 interface DatasetDetails {
   id: string;
   created_at: string;
-  update_at: string;
+  updated_at: string;
   status: string;
   name: string;
   description: string;
@@ -68,7 +68,7 @@ const DatasetDetails = ({ datasetName }: { datasetName: string }) => {
         <DetailItem label="Status" value={datasetDetails.status} />
         <DetailItem label="Name" value={datasetDetails.name} />
         <DetailItem label="Created At" value={new Date(datasetDetails.created_at).toLocaleString()} />
-        <DetailItem label="Last Updated" value={new Date(datasetDetails.update_at).toLocaleString()} />
+        <DetailItem label="Last Updated" value={new Date(datasetDetails.updated_at).toLocaleString()} />
         <DetailItem label="Description" value={datasetDetails.description} />
         <DetailItem label="File Name" value={datasetDetails.file_name} />
         <DetailItem label="File Size" value={datasetDetails.file_size} />

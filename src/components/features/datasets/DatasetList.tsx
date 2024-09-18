@@ -43,7 +43,13 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   );
 }
 
-const DatasetListContent = () => {
+interface DatasetListContentProps {
+  refreshTrigger: number;
+}
+
+const DatasetListContent: React.FC<DatasetListContentProps> = ({
+  refreshTrigger,
+}) => {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,6 +67,8 @@ const DatasetListContent = () => {
             `/datasets?page=${currentPage}`
         );
         setDatasets(response.data);
+        console.log(response.data);
+        
         setTotalPages(response.pagination.total_pages);
       } catch (error) {
         console.error("Error fetching datasets:", error);
@@ -77,50 +85,56 @@ const DatasetListContent = () => {
     };
 
     fetchDatasets();
-  }, [currentPage, toast]);
+  }, [currentPage, toast, refreshTrigger]);
 
   if (isLoading) {
     return <Spinner />;
   }
 
   return (
-      <VStack align="stretch" spacing={0} height={isMobile ? "auto" : "100%"}>
-        {datasets.map((dataset) => (
-            <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
-              <Box
-                  p={4}
-                  bg={selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"}
-                  borderLeft={
-                    selectedDatasetName === dataset.name ? "4px solid #7C3AED" : "none"
-                  }
-                  cursor="pointer"
-                  _hover={{ bg: "#F3E8FF" }}
-              >
-                <Flex justify="space-between" align="center" whiteSpace="nowrap">
-                  <Text fontWeight="medium" color="#261641" isTruncated>
-                    {dataset.name}
-                  </Text>
-                  <Text fontSize="sm" color="gray.500" isTruncated>
-                    {new Date(dataset.created_at).toLocaleString()}
-                  </Text>
-                </Flex>
-              </Box>
-            </Link>
-        ))}
-        <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
-          <Text fontSize="sm" color="gray.600">
-            Page {currentPage} of {totalPages}
-          </Text>
-        </Flex>
-      </VStack>
+    <VStack align="stretch" spacing={0} height={isMobile ? "auto" : "100%"}>
+      {datasets.map((dataset) => (
+        <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
+          <Box
+            p={4}
+            bg={
+              selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"
+            }
+            borderLeft={
+              selectedDatasetName === dataset.name
+                ? "4px solid #7C3AED"
+                : "none"
+            }
+            cursor="pointer"
+            _hover={{ bg: "#F3E8FF" }}
+          >
+            <Text fontWeight="medium" color="#261641">
+              {dataset.name}
+            </Text>
+            <Text fontSize="sm" color="gray.500">
+              {new Date(dataset.created_at).toLocaleString()}
+            </Text>
+          </Box>
+        </Link>
+      ))}
+      <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
+        <Text fontSize="sm" color="gray.600">
+          Page {currentPage} of {totalPages}
+        </Text>
+      </Flex>
+    </VStack>
   );
 };
 
-const DatasetList = () => {
+interface DatasetListProps {
+  refreshTrigger: number;
+}
+
+const DatasetList: React.FC<DatasetListProps> = ({ refreshTrigger }) => {
   return (
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
-        <DatasetListContent />
-      </ErrorBoundary>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <DatasetListContent refreshTrigger={refreshTrigger} />
+    </ErrorBoundary>
   );
 };
 
