@@ -1,4 +1,4 @@
-"use client";
+"use client"; // Make sure this is marked as a client component
 
 import React, { useState, useEffect } from 'react';
 import {
@@ -18,7 +18,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { fetchWithAuth } from '@/utils/api';
 
 const APIKeySettings: React.FC = () => {
-    const [apiKeys, setApiKeys] = useState<Array<{ name: string; expires_at: string; status: string }>>([]);
+    const [apiKeys, setApiKeys] = useState<Array<{ id: string; name: string; expires_at: string; status: string }>>([]);
     const [newKeyName, setNewKeyName] = useState('');
     const [newKeyExpiration, setNewKeyExpiration] = useState<Date | null>(null);
     const [showRevokedKeys, setShowRevokedKeys] = useState(false);
@@ -26,6 +26,7 @@ const APIKeySettings: React.FC = () => {
     const toast = useToast();
 
     useEffect(() => {
+        console.log("Component mounted. Fetching API keys...");
         listApiKeys();
     }, []);
 
@@ -53,6 +54,7 @@ const APIKeySettings: React.FC = () => {
                 setNewApiKeySecret(data.secret);
                 setNewKeyName('');
                 setNewKeyExpiration(null);
+                console.log("API key created successfully:", data.secret);
                 listApiKeys();
                 toast({
                     title: 'API Key Created',
@@ -63,6 +65,7 @@ const APIKeySettings: React.FC = () => {
                 });
             } else {
                 const errorData = await response.json();
+                console.error('Error creating API key:', errorData.message);
                 toast({
                     title: 'Error creating API key',
                     description: errorData.message,
@@ -78,15 +81,15 @@ const APIKeySettings: React.FC = () => {
 
     const listApiKeys = async () => {
         try {
-            const response = await fetchWithAuth(
-                `/api-keys`
-              );
-            if (response.ok) {
-                const data = await response.json();
-                setApiKeys(data.data);
-            } else {
-                console.error('Error fetching API keys');
-            }
+            //debugger;
+            const response = await fetchWithAuth(`/api-keys`);
+            //if (response.ok) {
+                //const data = await response.json();
+                console.log("Fetched API keys:", response); // Log the fetched data
+                setApiKeys(response?.data);
+            // } else {
+            //     console.error('Error fetching API keys');
+            // }
         } catch (error) {
             console.error('Error fetching API keys:', error);
         }
@@ -94,7 +97,10 @@ const APIKeySettings: React.FC = () => {
 
     const toggleApiKeyList = () => {
         setShowRevokedKeys((prevState) => !prevState);
+        console.log("Toggled key list. Showing revoked keys?", !showRevokedKeys);
     };
+
+    console.log("Current API keys state:", apiKeys); // Log the state of the API keys
 
     return (
         <VStack align="stretch" spacing={4}>
@@ -110,7 +116,7 @@ const APIKeySettings: React.FC = () => {
                     bg="white"
                     color="black"
                     sx={{
-                        '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
+                        '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
                     }}
                     flex="1"
                 />
@@ -127,7 +133,7 @@ const APIKeySettings: React.FC = () => {
                             bg="white"
                             color="black"
                             sx={{
-                                '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
+                                '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
                             }}
                         />
                     }
@@ -157,7 +163,7 @@ const APIKeySettings: React.FC = () => {
                     bg="white"
                     color="black"
                     sx={{
-                        '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
+                        '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
                     }}
                     flex="1"
                 />
@@ -166,7 +172,7 @@ const APIKeySettings: React.FC = () => {
                     bg="white"
                     color="black"
                     sx={{
-                        '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
+                        '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
                     }}
                     flex="1"
                 />
@@ -183,7 +189,7 @@ const APIKeySettings: React.FC = () => {
                             bg="white"
                             color="black"
                             sx={{
-                                '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
+                                '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
                             }}
                         />
                     }
@@ -209,17 +215,15 @@ const APIKeySettings: React.FC = () => {
                 <Heading size="sm" color="#333">Active Keys</Heading>
                 <VStack align="stretch">
                     {apiKeys
-                        .filter((key) => (showRevokedKeys ? key.status === 'REVOKED' : key.status === 'ACTIVE'))
+                        .filter((key) => key.status === 'ACTIVE') // Show only active keys
                         .map((key) => (
-                            <HStack key={key.name} justify="space-between" bg="white" p={2} borderRadius="md">
-                                <Text color="black">
+                            <HStack key={key.id} justify="space-between" bg="white" p={2} borderRadius="md">
+                                <Text color="black"> {/* Ensure text color is black */}
                                     {key.name} (Expires: {new Date(key.expires_at).toLocaleString()})
                                 </Text>
-                                {key.status === 'ACTIVE' && (
-                                    <Button colorScheme="red" size="sm">
-                                        Revoke
-                                    </Button>
-                                )}
+                                <Button colorScheme="red" size="sm">
+                                    Revoke
+                                </Button>
                             </HStack>
                         ))}
                 </VStack>
