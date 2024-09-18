@@ -23,7 +23,7 @@ import {
 } from "@chakra-ui/react";
 import { fetchWithAuth } from "@/utils/api";
 
-interface CreateFineTunedModelModalProps {
+interface UploadDatasetModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
@@ -46,7 +46,7 @@ interface Datasets {
   errors: string;
 }
 
-const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
+const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
   isOpen,
   onClose,
 }) => {
@@ -361,4 +361,4 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   );
 };
 
-export default CreateFineTunedModelModal;
+export default UploadDatasetModal;
