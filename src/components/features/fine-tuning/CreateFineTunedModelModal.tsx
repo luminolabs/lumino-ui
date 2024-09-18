@@ -22,6 +22,7 @@ import {
   SliderFilledTrack,
   SliderThumb,
   VStack,
+  useToast,
 } from "@chakra-ui/react";
 import { fetchWithAuth } from "@/utils/api";
 
@@ -30,57 +31,152 @@ interface CreateFineTunedModelModalProps {
   onClose: () => void;
 }
 
+interface BaseModel {
+  id: string;
+  description: string;
+  hf_url: string;
+  status: string;
+  name: string;
+  meta: string;
+}
+interface Datasets {
+  id: string;
+  description: string;
+  status: string;
+  name: string;
+  fileName: string;
+  fileSize: string;
+  errors: string;
+}
+
 const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const [baseModels, setBaseModels] = useState<string[]>([]);
+  //   const [validationDataOption, setValidationDataOption] = useState<
+  //     "upload" | "select" | "none"
+  //   >("upload");
+  const [baseModels, setBaseModels] = useState<BaseModel[]>([]);
   const [selectedBaseModel, setSelectedBaseModel] = useState<string>("");
-  const [trainingDataOption, setTrainingDataOption] = useState<
-    "upload" | "select"
-  >("upload");
-  const [validationDataOption, setValidationDataOption] = useState<
-    "upload" | "select" | "none"
-  >("upload");
+  const [datasets, setDatasets] = useState<Datasets[]>([]);
+  const [selectedDatasets, setSelectedDatasets] = useState<string>("");
+  const [jobName, setJobName] = useState<string>("");
+  const [batchSize, setBatchSize] = useState<number>(2);
+  const [learningRate, setLearningRate] = useState<number>(2);
+  const [shuffle, setShuffle] = useState<boolean>(true);
   const [seed, setSeed] = useState<string>("Random");
-  const [epochs, setEpochs] = useState<number>(3);
-  const [batchSize, setBatchSize] = useState<number>(8);
-  const [learningRate, setLearningRate] = useState<number>(3);
+  const [numEpochs, setNumEpochs] = useState<number>(1);
+  const [useLora, setUseLora] = useState<boolean>(true);
+  const [useQlora, setUseQlora] = useState<boolean>(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const toast = useToast();
+
+  const handleCreateJob = async () => {
+    if (!selectedBaseModel || !selectedDatasets || !jobName) {
+      toast({
+        title: "Validation Error",
+        description: "Please fill in all required fields.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    const jobData = {
+      base_model_name: selectedBaseModel,
+      dataset_name: selectedDatasets,
+      parameters: {
+        batch_size: batchSize,
+        shuffle: shuffle,
+        num_epochs: numEpochs,
+        use_lora: useLora,
+        use_qlora: useQlora,
+      },
+      name: jobName,
+    };
+
+    try {
+      const data = await fetchWithAuth("/fine-tuning", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(jobData),
+      });
+
+      toast({
+        title: "Job Created",
+        description: `Fine-tuning job "${data.name}" has been created successfully.`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onClose();
+      // Optionally, you can trigger a refresh of the job list here
+    } catch (error: any) {
+      console.error("Error creating fine-tuning job:", error);
+      toast({
+        title: "Error",
+        description:
+          error.message ||
+          "An error occurred while creating the fine-tuning job.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     const fetchBaseModels = async () => {
       try {
-        const data = await fetchWithAuth("/base-models");
-        setBaseModels(data);
+        const data = await fetchWithAuth("/models/base");
+        setBaseModels(data?.data);
       } catch (error) {
         console.error("Error fetching base models:", error);
       }
     };
     fetchBaseModels();
+  }, [isOpen]);
+
+  useEffect(() => {
+    const fetchDatasets = async () => {
+      try {
+        const response = await fetchWithAuth("/datasets");
+        if (response && Array.isArray(response.data)) {
+          setDatasets(response.data);
+        } else {
+          console.error("Unexpected API response structure:", response);
+        }
+      } catch (error) {
+        console.error("Error fetching datasets:", error);
+      }
+    };
+    fetchDatasets();
   }, []);
 
-  const handleFileUpload = async (
-    file: File,
-    type: "training" | "validation"
-  ) => {
-    const formData = new FormData();
-    formData.append("file", file);
-    try {
-      await fetchWithAuth(`/upload-${type}-data`, {
-        method: "POST",
-        body: formData,
-      });
-      console.log(`${type} data uploaded successfully`);
-    } catch (error) {
-      console.error(`Error uploading ${type} data:`, error);
-    }
-  };
-
-  const handleCreateJob = async () => {
-    // Implement job creation logic here
-    console.log("Creating fine-tuning job...");
-    onClose();
-  };
+  //   const handleFileUpload = async (
+  //     file: File,
+  //     type: "training" | "validation"
+  //   ) => {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
+  //     try {
+  //       await fetchWithAuth(`/upload-${type}-data`, {
+  //         method: "POST",
+  //         body: formData,
+  //       });
+  //       console.log(`${type} data uploaded successfully`);
+  //     } catch (error) {
+  //       console.error(`Error uploading ${type} data:`, error);
+  //     }
+  //   };
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
@@ -91,6 +187,15 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
         <ModalBody>
           <VStack spacing={4} align="stretch">
             <Box>
+              <Text fontWeight="bold">Job Name : </Text>
+              <Input
+                value={jobName}
+                onChange={(e) => setJobName(e.target.value)}
+                placeholder="my-model-1"
+              />
+            </Box>
+
+            <Box>
               <Text fontWeight="bold">Base Model</Text>
               <Select
                 placeholder="Select"
@@ -98,14 +203,29 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                 onChange={(e) => setSelectedBaseModel(e.target.value)}
               >
                 {baseModels.map((model) => (
-                  <option key={model} value={model}>
-                    {model}
+                  <option key={model.id} value={model.name}>
+                    {model.name + " (" + model.description + ")"}
                   </option>
                 ))}
               </Select>
             </Box>
 
             <Box>
+              <Text fontWeight="bold">Dataset</Text>
+              <Select
+                placeholder="Select"
+                value={selectedDatasets}
+                onChange={(e) => setSelectedDatasets(e.target.value)}
+              >
+                {datasets.map((model) => (
+                  <option key={model.name} value={model.name}>
+                    {model.name + " (" + model.description + ")"}
+                  </option>
+                ))}
+              </Select>
+            </Box>
+
+            {/* <Box>
               <Text fontWeight="bold">Training Data</Text>
               <Text fontSize="sm" color="gray.500">
                 Add a jsonl file
@@ -131,9 +251,9 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                   }
                 />
               )}
-            </Box>
+            </Box> */}
 
-            <Box>
+            {/* <Box>
               <Text fontWeight="bold">Validation Data</Text>
               <Text fontSize="sm" color="gray.500">
                 Add a jsonl file
@@ -160,7 +280,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                   }
                 />
               )}
-            </Box>
+            </Box> */}
 
             <Box>
               <Text fontWeight="bold">Seed</Text>
@@ -180,15 +300,15 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                     min={0}
                     max={20}
                     step={1}
-                    value={epochs}
-                    onChange={(value) => setEpochs(value)}
+                    value={numEpochs}
+                    onChange={(value) => setNumEpochs(value)}
                   >
                     <SliderTrack>
                       <SliderFilledTrack />
                     </SliderTrack>
                     <SliderThumb />
                   </Slider>
-                  <Text textAlign="right">{epochs}</Text>
+                  <Text textAlign="right">{numEpochs}</Text>
                 </Box>
                 <Box>
                   <Text>Batch Size</Text>
@@ -230,7 +350,12 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
           <Button variant="ghost" mr={3} onClick={onClose}>
             Cancel
           </Button>
-          <Button colorScheme="purple" onClick={handleCreateJob}>
+          <Button
+            colorScheme="purple"
+            onClick={handleCreateJob}
+            isLoading={isSubmitting}
+            loadingText="Creating..."
+          >
             Create fine-tuning job
           </Button>
         </ModalFooter>
