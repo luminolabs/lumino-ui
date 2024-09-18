@@ -46,13 +46,13 @@ export default function DatasetsPage() {
           Upload Dataset
         </Button>
       </Flex>
-      <Flex direction={isMobile ? "column" : "row"}>
-        <Box width={isMobile ? "100%" : "300px"} bg="white" borderRadius="md" boxShadow="sm" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>
+      <Flex direction={isMobile ? "column" : "row"} height="100%">
+        <Box width={isMobile ? "100%" : "35%"} bg="white" borderRadius="md" boxShadow="sm" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>
           <Suspense fallback={<Spinner />}>
             <DatasetList refreshTrigger={refreshTrigger} />
           </Suspense>
         </Box>
-        <Box flex={1} bg="white" borderRadius="md" boxShadow="sm" p={6}>
+        <Box flex={1} bg="white" borderRadius="md" boxShadow="sm" p={6} width={isMobile ? "100%" : "35%"}>
           <Suspense fallback={<Spinner />}>
             {datasetName ? (
               <DatasetDetails datasetName={datasetName} />
