@@ -46,9 +46,7 @@ interface DatasetListContentProps {
   refreshTrigger: number;
 }
 
-const DatasetListContent: React.FC<DatasetListContentProps> = ({
-                                                                 refreshTrigger,
-                                                               }) => {
+const DatasetListContent: React.FC<DatasetListContentProps> = ({refreshTrigger}) => {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -93,13 +91,9 @@ const DatasetListContent: React.FC<DatasetListContentProps> = ({
             <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
               <Box
                   p={4}
-                  bg={
-                    selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"
-                  }
+                  bg={selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"}
                   borderLeft={
-                    selectedDatasetName === dataset.name
-                        ? "4px solid #7C3AED"
-                        : "none"
+                    selectedDatasetName === dataset.name ? "4px solid #7C3AED": "none"
                   }
                   cursor="pointer"
                   _hover={{ bg: "#F3E8FF" }}
@@ -118,7 +112,10 @@ const DatasetListContent: React.FC<DatasetListContentProps> = ({
         ))}
         <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
           <Text fontSize="sm" color="gray.600">
-            Page {currentPage} of {totalPages}
+            {totalPages == 0 ? 
+            `Page 0 of 0` :
+            `Page ${currentPage} of ${totalPages}`
+            }
           </Text>
         </Flex>
       </VStack>
