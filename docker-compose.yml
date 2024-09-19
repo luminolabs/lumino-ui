@@ -1,7 +1,7 @@
-version: "3.8"
+version: '3.8'
 
 services:
-  nextjs-app:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -9,9 +9,4 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - NODE_ENV=production
-      - API_URL=http://backend-service:5000/api  # Proxy to your backend service
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: npm run start
+      - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}

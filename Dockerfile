@@ -1,23 +1,47 @@
-# Use an official Node.js runtime as a parent image
-FROM node:18-alpine
+# Stage 1: Building the code
+FROM node:18-alpine AS builder
 
-# Set the working directory in the container
 WORKDIR /app
 
-# Copy package.json and package-lock.json (or yarn.lock) to the container
-COPY package*.json ./
+# Install yarn
+RUN apk add --no-cache yarn
 
-# Install any needed packages
-RUN npm install
+# Copy package.json, yarn.lock, and .env
+COPY package.json yarn.lock .env ./
 
-# Copy the rest of the application code to the container
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
+# Copy the rest of the code
 COPY . .
 
-# Build the Next.js app
-RUN npm run build
+# Build the application
+RUN yarn build
 
-# Expose the port the app runs on
+# Stage 2: Run the built code
+FROM node:18-alpine AS runner
+
+WORKDIR /app
+
+ENV NODE_ENV production
+
+# Install yarn
+RUN apk add --no-cache yarn
+
+# Copy necessary files from builder stage
+COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/yarn.lock ./yarn.lock
+COPY --from=builder /app/next.config.mjs ./next.config.mjs
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/src ./src
+
+# Install production dependencies
+RUN yarn install --production --frozen-lockfile
+
 EXPOSE 3000
 
-# Start the Next.js app
-CMD ["npm", "run", "start"]
+ENV PORT 3000
+
+# Use Next.js start command instead of node server.js
+CMD ["yarn", "start"]

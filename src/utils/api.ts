@@ -1,4 +1,4 @@
-const API_BASE_URL = '/api/proxy'; // This points to our Next.js API route
+const API_BASE_URL = '/api/proxy'; // Always use the Next.js API route
 
 export async function fetchWithAuth(endpoint: string, options: RequestInit = {}) {
   const token = localStorage.getItem('oauthToken'); // Assume the token is stored in localStorage
