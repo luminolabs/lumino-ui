@@ -49,9 +49,6 @@ const APIKeySettings: React.FC = () => {
                 body: JSON.stringify({ name: newKeyName, expires_at: newKeyExpiration.toISOString() }),
             });
 
-            // if (response.ok) {
-
-            debugger;
             console.log("Response from create API key:", response);
             const data = await response;
             setNewApiKeySecret(data.secret);
@@ -71,12 +68,46 @@ const APIKeySettings: React.FC = () => {
         }
     };
 
+    const revokeApiKey = async (name: string) => {
+        if (name === "") {
+            toast({
+                title: 'Error',
+                description: 'Please provide a valid Api key name',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
+
+        try {
+            const response = await fetchWithAuth(`/api-keys/${name}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                redirect: "follow"
+            });
+
+            console.log("Response from Delete API key : ", response);
+            const data = await response;
+            console.log("API key revoked successfully");
+            listApiKeys();
+            toast({
+                title: 'API Key revoked',
+                description: 'This API key has been revoked now',
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+            });
+        } catch (error) {
+            console.error('Error revoking API key:', error);
+        }
+    };
+
     const listApiKeys = async () => {
         try {
-            //debugger;
             const response = await fetchWithAuth(`/api-keys`);
-                console.log("Fetched API keys:", response); // Log the fetched data
-                setApiKeys(response?.data);
+            console.log("Fetched API keys:", response); // Log the fetched data
+            setApiKeys(response?.data);
         } catch (error) {
             console.error('Error fetching API keys:', error);
         }
@@ -143,51 +174,6 @@ const APIKeySettings: React.FC = () => {
 
             <Divider />
 
-            {/*/!* Update API Key Section *!/*/}
-            {/*<HStack spacing={2} alignItems="center">*/}
-            {/*    <Input*/}
-            {/*        placeholder="Search and select API key"*/}
-            {/*        bg="white"*/}
-            {/*        color="black"*/}
-            {/*        sx={{*/}
-            {/*            '::placeholder': { color: 'gray.500' }, // Custom placeholder styling*/}
-            {/*        }}*/}
-            {/*        flex="1"*/}
-            {/*    />*/}
-            {/*    <Input*/}
-            {/*        placeholder="Enter updated API key name (optional)"*/}
-            {/*        bg="white"*/}
-            {/*        color="black"*/}
-            {/*        sx={{*/}
-            {/*            '::placeholder': { color: 'gray.500' }, // Custom placeholder styling*/}
-            {/*        }}*/}
-            {/*        flex="1"*/}
-            {/*    />*/}
-            {/*    <DatePicker*/}
-            {/*        selected={newKeyExpiration}*/}
-            {/*        onChange={(date: Date | null, event?: React.SyntheticEvent) => setNewKeyExpiration(date)}  // Updated to accept 'null'*/}
-            {/*        showTimeSelect*/}
-            {/*        timeFormat="HH:mm"*/}
-            {/*        timeIntervals={15}*/}
-            {/*        dateFormat="MM/dd/yyyy h:mm aa"*/}
-            {/*        placeholderText="Select expiration date & time"*/}
-            {/*        customInput={*/}
-            {/*            <Input*/}
-            {/*                bg="white"*/}
-            {/*                color="black"*/}
-            {/*                sx={{*/}
-            {/*                    '::placeholder': { color: 'gray.500' },  // Custom placeholder styling*/}
-            {/*                }}*/}
-            {/*            />*/}
-            {/*        }*/}
-            {/*    />*/}
-            {/*    <Button colorScheme="yellow">*/}
-            {/*        Update API Key*/}
-            {/*    </Button>*/}
-            {/*</HStack>*/}
-
-            <Divider />
-
             {/* API Keys List Section */}
             <HStack spacing={2}>
                 <Button colorScheme="blue" onClick={toggleApiKeyList} width="full">
@@ -201,18 +187,28 @@ const APIKeySettings: React.FC = () => {
             <Box mt={4}>
                 <Heading size="sm" color="#333">Active Keys</Heading>
                 <VStack align="stretch">
-                    {apiKeys
+                    {!showRevokedKeys ? apiKeys
                         .filter((key) => key.status === 'ACTIVE') // Show only active keys
                         .map((key) => (
                             <HStack key={key.id} justify="space-between" bg="white" p={2} borderRadius="md">
-                                <Text color="black"> {/* Ensure text color is black */}
+                                <Text color="gray"> {/* Ensure text color is black */}
                                     {key.name} (Expires: {new Date(key.expires_at).toLocaleString()})
                                 </Text>
-                                <Button colorScheme="red" size="sm">
+                                <Button colorScheme="red" size="sm" onClick={() => {revokeApiKey(key.name)}}>
                                     Revoke
                                 </Button>
                             </HStack>
-                        ))}
+                        )) :
+                        apiKeys
+                        .filter((key) => key.status === 'REVOKED') // Show only active keys
+                        .map((key) => (
+                            <HStack key={key.id} justify="space-between" bg="white" p={2} borderRadius="md">
+                                <Text color="gray">
+                                    {key.name} (Expired)
+                                </Text>
+                            </HStack>
+                        )) 
+                    }
                 </VStack>
             </Box>
         </VStack>
