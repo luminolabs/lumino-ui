@@ -1,0 +1,17 @@
+.react-datepicker-wrapper {
+    width: auto;
+  }
+  
+  .react-datepicker__input-container {
+    display: inline-block;
+  }
+  
+  .react-datepicker__day--selected, 
+  .react-datepicker__day--in-selecting-range, 
+  .react-datepicker__day--in-range {
+    background-color: #7C3AED !important;
+  }
+  
+  .react-datepicker__day--keyboard-selected {
+    background-color: #9F7AEA !important;
+  }
