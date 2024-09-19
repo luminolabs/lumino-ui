@@ -102,7 +102,7 @@ const Sidebar = () => {
                 API Keys
               </Button>
             </Link>
-            <Link href="/settings/team" passHref>
+            {/* <Link href="/settings/team" passHref>
               <Button as="a" variant="ghost" justifyContent="flex-start" size="sm"
                 bg={isActive('/settings/team') ? '#E7E0FD' : 'transparent'}
                 color={isActive('/settings/team') ? '#6B46C1' : 'gray.600'}
@@ -111,7 +111,7 @@ const Sidebar = () => {
               >
                 Team
               </Button>
-            </Link>
+            </Link> */}
           </VStack>
         </Collapse>
       </VStack>
