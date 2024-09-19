@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_BASE_URL = process.env.LUI_API_BASE_URL || 'http://localhost:5100/v1';
+const API_BASE_URL = process.env.LUI_API_BASE_URL || 'http://localhost:5100/v1/';
 
 export async function GET(request: NextRequest) {
   console.log('GET request received');
