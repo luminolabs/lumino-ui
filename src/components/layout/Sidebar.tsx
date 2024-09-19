@@ -81,14 +81,6 @@ const Sidebar = () => {
         <Collapse in={isSettingsOpen}>
           <VStack align="stretch" pl={6} mt={2} spacing={2}>
           <Link href="/settings" passHref>
-              <Button as="a" variant="ghost" justifyContent="flex-start" size="sm" 
-                bg={pathname === '/settings' ? '#E7E0FD' : 'transparent'}
-                color={pathname === '/settings' ? '#6B46C1' : 'gray.600'}
-                _hover={{ bg: '#E7E0FD', color: '#6B46C1' }}
-                w="100%"
-              >
-                General
-              </Button>
             </Link>
             <Link href="/settings/billing" passHref>
               <Button as="a" variant="ghost" justifyContent="flex-start" size="sm"
