@@ -143,48 +143,48 @@ const APIKeySettings: React.FC = () => {
 
             <Divider />
 
-            {/* Update API Key Section */}
-            <HStack spacing={2} alignItems="center">
-                <Input
-                    placeholder="Search and select API key"
-                    bg="white"
-                    color="black"
-                    sx={{
-                        '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
-                    }}
-                    flex="1"
-                />
-                <Input
-                    placeholder="Enter updated API key name (optional)"
-                    bg="white"
-                    color="black"
-                    sx={{
-                        '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
-                    }}
-                    flex="1"
-                />
-                <DatePicker
-                    selected={newKeyExpiration}
-                    onChange={(date: Date | null, event?: React.SyntheticEvent) => setNewKeyExpiration(date)}  // Updated to accept 'null'
-                    showTimeSelect
-                    timeFormat="HH:mm"
-                    timeIntervals={15}
-                    dateFormat="MM/dd/yyyy h:mm aa"
-                    placeholderText="Select expiration date & time"
-                    customInput={
-                        <Input
-                            bg="white"
-                            color="black"
-                            sx={{
-                                '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
-                            }}
-                        />
-                    }
-                />
-                <Button colorScheme="yellow">
-                    Update API Key
-                </Button>
-            </HStack>
+            {/*/!* Update API Key Section *!/*/}
+            {/*<HStack spacing={2} alignItems="center">*/}
+            {/*    <Input*/}
+            {/*        placeholder="Search and select API key"*/}
+            {/*        bg="white"*/}
+            {/*        color="black"*/}
+            {/*        sx={{*/}
+            {/*            '::placeholder': { color: 'gray.500' }, // Custom placeholder styling*/}
+            {/*        }}*/}
+            {/*        flex="1"*/}
+            {/*    />*/}
+            {/*    <Input*/}
+            {/*        placeholder="Enter updated API key name (optional)"*/}
+            {/*        bg="white"*/}
+            {/*        color="black"*/}
+            {/*        sx={{*/}
+            {/*            '::placeholder': { color: 'gray.500' }, // Custom placeholder styling*/}
+            {/*        }}*/}
+            {/*        flex="1"*/}
+            {/*    />*/}
+            {/*    <DatePicker*/}
+            {/*        selected={newKeyExpiration}*/}
+            {/*        onChange={(date: Date | null, event?: React.SyntheticEvent) => setNewKeyExpiration(date)}  // Updated to accept 'null'*/}
+            {/*        showTimeSelect*/}
+            {/*        timeFormat="HH:mm"*/}
+            {/*        timeIntervals={15}*/}
+            {/*        dateFormat="MM/dd/yyyy h:mm aa"*/}
+            {/*        placeholderText="Select expiration date & time"*/}
+            {/*        customInput={*/}
+            {/*            <Input*/}
+            {/*                bg="white"*/}
+            {/*                color="black"*/}
+            {/*                sx={{*/}
+            {/*                    '::placeholder': { color: 'gray.500' },  // Custom placeholder styling*/}
+            {/*                }}*/}
+            {/*            />*/}
+            {/*        }*/}
+            {/*    />*/}
+            {/*    <Button colorScheme="yellow">*/}
+            {/*        Update API Key*/}
+            {/*    </Button>*/}
+            {/*</HStack>*/}
 
             <Divider />
 
