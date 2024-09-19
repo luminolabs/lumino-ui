@@ -6,8 +6,8 @@ WORKDIR /app
 # Install yarn
 RUN apk add --no-cache yarn
 
-# Copy package.json, yarn.lock, and .env
-COPY package.json yarn.lock .env ./
+# Copy package.json, yarn.lock
+COPY package.json yarn.lock ./
 
 # Install dependencies
 RUN yarn install --frozen-lockfile
