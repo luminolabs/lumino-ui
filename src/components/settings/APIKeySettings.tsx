@@ -109,7 +109,7 @@ const APIKeySettings: React.FC = () => {
                 />
                 <DatePicker
                     selected={newKeyExpiration}
-                    onChange={(date: Date) => setNewKeyExpiration(date)}
+                    onChange={(date: Date | null) => setNewKeyExpiration(date)}  // Allow null value
                     showTimeSelect
                     timeFormat="HH:mm"
                     timeIntervals={15}
@@ -120,7 +120,7 @@ const APIKeySettings: React.FC = () => {
                             bg="white"
                             color="black"
                             sx={{
-                                '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
+                                '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
                             }}
                         />
                     }
@@ -165,7 +165,7 @@ const APIKeySettings: React.FC = () => {
                 />
                 <DatePicker
                     selected={newKeyExpiration}
-                    onChange={(date: Date) => setNewKeyExpiration(date)}
+                    onChange={(date: Date | null, event?: React.SyntheticEvent) => setNewKeyExpiration(date)}  // Updated to accept 'null'
                     showTimeSelect
                     timeFormat="HH:mm"
                     timeIntervals={15}
@@ -176,7 +176,7 @@ const APIKeySettings: React.FC = () => {
                             bg="white"
                             color="black"
                             sx={{
-                                '::placeholder': { color: 'gray.500' }, // Custom placeholder styling
+                                '::placeholder': { color: 'gray.500' },  // Custom placeholder styling
                             }}
                         />
                     }
