@@ -11,6 +11,8 @@ import {
     useToast,
     Divider,
     Heading,
+    useClipboard,
+    IconButton,
 } from '@chakra-ui/react';
 import { FiCopy } from 'react-icons/fi';
 import DatePicker from 'react-datepicker';
@@ -23,6 +25,7 @@ const APIKeySettings: React.FC = () => {
     const [newKeyExpiration, setNewKeyExpiration] = useState<Date | null>(null);
     const [showRevokedKeys, setShowRevokedKeys] = useState(false);
     const [newApiKeySecret, setNewApiKeySecret] = useState<string | null>(null);
+    const { onCopy, hasCopied } = useClipboard(newApiKeySecret || '')
     const toast = useToast();
 
     useEffect(() => {
@@ -163,12 +166,26 @@ const APIKeySettings: React.FC = () => {
 
             {newApiKeySecret && (
                 <Box mt={4}>
-                    <Text bg="#F8F9FA" p={2} borderRadius="md" fontFamily="monospace" color="black">
-                        Your new API key is: {newApiKeySecret} <FiCopy cursor="pointer" />
+                    <Text display="flex" alignItems="center" bg="#F8F9FA" p={2} borderRadius="md" fontFamily="monospace" color="black">
+                        Your new API key is: {newApiKeySecret}
+                        <IconButton
+                            aria-label="Copy API key"
+                            icon={<FiCopy />}
+                            onClick={onCopy}
+                            ml={2}
+                            size="sm"
+                            colorScheme="purple"
+                        />
+                        {hasCopied && (
+                            <Text color="green.500" mx="8px" my="auto">
+                                Copied to clipboard!
+                            </Text>
+                        )}
                     </Text>
-                    <Text color="red.500">
+                    <Text alignItems="center" color="red.500">
                         Please save this key now. You won't be able to see it again!
                     </Text>
+
                 </Box>
             )}
 
@@ -194,20 +211,20 @@ const APIKeySettings: React.FC = () => {
                                 <Text color="gray"> {/* Ensure text color is black */}
                                     {key.name} (Expires: {new Date(key.expires_at).toLocaleString()})
                                 </Text>
-                                <Button colorScheme="red" size="sm" onClick={() => {revokeApiKey(key.name)}}>
+                                <Button colorScheme="red" size="sm" onClick={() => { revokeApiKey(key.name) }}>
                                     Revoke
                                 </Button>
                             </HStack>
                         )) :
                         apiKeys
-                        .filter((key) => key.status === 'REVOKED') // Show only active keys
-                        .map((key) => (
-                            <HStack key={key.id} justify="space-between" bg="white" p={2} borderRadius="md">
-                                <Text color="gray">
-                                    {key.name} (Expired)
-                                </Text>
-                            </HStack>
-                        )) 
+                            .filter((key) => key.status === 'REVOKED') // Show only active keys
+                            .map((key) => (
+                                <HStack key={key.id} justify="space-between" bg="white" p={2} borderRadius="md">
+                                    <Text color="gray">
+                                        {key.name} (Expired)
+                                    </Text>
+                                </HStack>
+                            ))
                     }
                 </VStack>
             </Box>

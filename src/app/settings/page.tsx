@@ -3,7 +3,6 @@
 import { Box, VStack, Heading } from '@chakra-ui/react';
 import BillingSettings from '@/components/settings/BillingSettings';
 import APIKeySettings from '@/components/settings/APIKeySettings';
-import TeamSettings from '@/components/settings/TeamSettings';
 
 export default function SettingsPage() {
   return (
@@ -12,7 +11,6 @@ export default function SettingsPage() {
       <VStack spacing={12} align="stretch">
         <BillingSettings />
         <APIKeySettings />
-        <TeamSettings />
       </VStack>
     </Box>
   );
