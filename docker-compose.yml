@@ -1,12 +1,10 @@
-version: '3.8'
-
 services:
   frontend:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: nextjs-app
+    build: .
+    command: yarn start
     ports:
       - "3000:3000"
     environment:
       - NEXT_PUBLIC_API_BASE_URL=${NEXT_PUBLIC_API_BASE_URL}
+    extra_hosts:
+      - "localhost:host-gateway"
