@@ -8,7 +8,7 @@ const nextConfig = {
     return [
       {
         source: "/api/proxy/:path*",
-        destination: `${process.env.LUI_API_BASE_URL}:path*`,
+        destination: `${process.env.LUI_API_BASE_URL || "http://localhost:5100/v1/"}:path*`,
       },
     ];
   },
