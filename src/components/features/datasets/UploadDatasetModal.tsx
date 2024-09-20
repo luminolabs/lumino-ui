@@ -107,31 +107,39 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Upload Dataset</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
+      <ModalContent style={{ background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10 }}>
+        <ModalHeader color="#261641">Upload Dataset</ModalHeader>
+        <ModalCloseButton color="#261641" />
+        <ModalBody color="#4e00a6">
           <VStack spacing={4} align="stretch">
             <FormControl isInvalid={!!nameError} isRequired>
               <FormLabel>Dataset Name</FormLabel>
               <Input
+                color="black"
+                borderColor="#4e00a6"
                 value={datasetName}
                 onChange={(e) => setDatasetName(e.target.value)}
                 placeholder="Enter dataset name"
+                _placeholder={{ color: "gray.400" }}
               />
               <FormErrorMessage>{nameError}</FormErrorMessage>
             </FormControl>
             <FormControl>
               <FormLabel>Description (Optional)</FormLabel>
               <Input
+                color="black"
+                borderColor="#4e00a6"
                 value={datasetDescription}
                 onChange={(e) => setDatasetDescription(e.target.value)}
                 placeholder="Enter dataset description"
+                _placeholder={{ color: "gray.400" }}
               />
             </FormControl>
             <FormControl isRequired>
               <FormLabel>Upload File</FormLabel>
               <Input
+                color="black"
+                borderColor="#4e00a6"
                 type="file"
                 accept=".jsonl,.json,.csv,.txt"
                 onChange={handleFileChange}
@@ -145,11 +153,13 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>
+          <Button bg="#F2F2F2" color="black" mr={3} onClick={onClose}>
             Cancel
           </Button>
           <Button
-            colorScheme="purple"
+            color="white"
+            bg="#4e00a6"
+            _hover={{ bg: "#0005A6" }}
             onClick={handleUpload}
             isLoading={isUploading}
             loadingText="Uploading..."

@@ -83,19 +83,13 @@ const BillingSettings = () => {
       <Box>
         <Button
           isDisabled={Number.isNaN(amount) || amount === 0}
-          colorScheme="purple"
-          bg="#E7E0FD"
-          color="#6B46C1"
-          _hover={{ bg: "#D3C7F2" }}
+          color="white"
+          bg="#4e00a6"
+          _hover={{ bg: "#0005A6" }}
           onClick={handleAddCredits}
         >
           {Number.isNaN(amount) || amount === 0 ?
             `Add $0 Credits` : `Add ${amount} Credits`}
-        </Button>
-      </Box>
-      <Box>
-        <Button variant="link" color="#6B46C1">
-          Update Billing
         </Button>
       </Box>
     </VStack>

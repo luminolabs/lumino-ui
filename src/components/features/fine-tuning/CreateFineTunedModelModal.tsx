@@ -179,23 +179,25 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
     <Modal isOpen={isOpen} onClose={onClose} size="xl" >
       <ModalOverlay />
       <ModalContent style={{ background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10 }}>
-        <ModalHeader color="gray.800">Create a fine-tuned model</ModalHeader>
-        <ModalCloseButton color="gray.800"/>
+        <ModalHeader color="#261641">Create a fine-tuned model</ModalHeader>
+        <ModalCloseButton color="#261641"/>
         <ModalBody className="lumino-purple">
           <VStack spacing={4} align="stretch">
             <Box className="lumino-purple-border">
               <Text fontWeight="bold">Job Name:</Text>
               <Input
+                color="black"
                 value={jobName}
                 onChange={(e) => setJobName(e.target.value)}
                 placeholder="my-model-1"
+                _placeholder={{ color: "gray.400" }}
               />
             </Box>
 
             <Box>
               <Text fontWeight="bold">Base Model</Text>
               <Select
-                style={{ borderColor: "#4e00a6" }}
+                style={{ color: "black", borderColor: "#4e00a6" }}
                 placeholder="Select"
                 value={selectedBaseModel}
                 onChange={(e) => setSelectedBaseModel(e.target.value)}
@@ -211,7 +213,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
             <Box>
               <Text fontWeight="bold">Dataset</Text>
               <Select
-                style={{ borderColor: "#4e00a6" }}
+                style={{ color: "black", borderColor: "#4e00a6" }}
                 placeholder="Select"
                 value={selectedDatasets}
                 onChange={(e) => setSelectedDatasets(e.target.value)}
@@ -284,9 +286,11 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
             <Box className="lumino-purple-border">
               <Text fontWeight="bold">Seed</Text>
               <Input
+              color="black"
                 value={seed}
                 onChange={(e) => setSeed(e.target.value)}
                 placeholder="Random"
+                _placeholder={{ color: "gray.400" }}
               />
             </Box>
 
@@ -380,6 +384,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
           <Button
             color="white"
             bg="#4e00a6"
+            _hover={{ bg: "#0005A6" }}
             onClick={handleCreateJob}
             isLoading={isSubmitting}
             loadingText="Creating..."

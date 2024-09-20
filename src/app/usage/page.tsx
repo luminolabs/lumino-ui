@@ -36,7 +36,7 @@ export default function Usage() {
         />
       </HStack>
       <UsageTable dataType={activeTab} dateRange={dateRange} />
-      <Flex justify="flex-end" mt={6}>
+      {/* <Flex justify="flex-end" mt={6}>
         <Button 
           leftIcon={<FiDollarSign />} 
           bg="purple.100" 
@@ -46,7 +46,7 @@ export default function Usage() {
         >
           Add Credits
         </Button>
-      </Flex>
+      </Flex> */}
     </Box>
   );
 }

@@ -159,7 +159,9 @@ const APIKeySettings: React.FC = () => {
                         />
                     }
                 />
-                <Button colorScheme="green" onClick={createApiKey}>
+                <Button color="white"
+                    bg="#4e00a6"
+                    _hover={{ bg: "#0005A6" }} onClick={createApiKey}>
                     Create API Key
                 </Button>
             </HStack>
@@ -193,11 +195,10 @@ const APIKeySettings: React.FC = () => {
 
             {/* API Keys List Section */}
             <HStack spacing={2}>
-                <Button colorScheme="blue" onClick={toggleApiKeyList} width="full">
+                <Button color="white"
+                    bg="#4e00a6"
+                    _hover={{ bg: "#0005A6" }} onClick={toggleApiKeyList} width="full">
                     {showRevokedKeys ? 'Show Active Keys' : 'Show Revoked Keys'}
-                </Button>
-                <Button colorScheme="blue" onClick={listApiKeys} width="full">
-                    Refresh List
                 </Button>
             </HStack>
 

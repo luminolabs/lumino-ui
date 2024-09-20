@@ -37,9 +37,9 @@ export default function FineTuningPage() {
         <Heading size="lg" color="#261641" mb={isMobile ? 4 : 0}>Fine-tuning</Heading>
         <Button 
           leftIcon={<FiPlus />}
-          bg="#7C3AED" 
-          color="white" 
-          _hover={{ bg: '#6D28D9' }}
+          color="white"
+          bg="#4e00a6"
+          _hover={{ bg: "#0005A6" }}
           width={isMobile ? "100%" : "auto"}
           onClick={onOpen}
         >
