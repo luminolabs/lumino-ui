@@ -10,10 +10,10 @@ const Header = () => {
   const isMobile = useBreakpointValue({ base: true, md: false });
 
   const handleLogin = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth0/login`;
+    window.location.href = `${process.env.API_BASE_URL}auth0/login`;
   };
   const handleLogout = () => {
-    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth0/logout`;
+    window.location.href = `${process.env.API_BASE_URL}auth0/logout`;
   };
 
   return (
