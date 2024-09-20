@@ -1,5 +1,6 @@
 services:
-  frontend:
+  dashboard:
+    image: us-central1-docker.pkg.dev/neat-airport-407301/lum-docker-images/lumino-dashboard:latest
     build: .
     command: yarn start
     ports:
