@@ -20,8 +20,10 @@ import {
   SliderThumb,
   VStack,
   useToast,
+  SliderMark,
 } from "@chakra-ui/react";
 import { fetchWithAuth } from "@/utils/api";
+import "@/app/global.css"
 
 interface CreateFineTunedModelModalProps {
   isOpen: boolean;
@@ -174,15 +176,15 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   //   };
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl">
+    <Modal isOpen={isOpen} onClose={onClose} size="xl" >
       <ModalOverlay />
-      <ModalContent>
-        <ModalHeader>Create a fine-tuned model</ModalHeader>
-        <ModalCloseButton />
-        <ModalBody>
+      <ModalContent style={{ background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10 }}>
+        <ModalHeader color="gray.800">Create a fine-tuned model</ModalHeader>
+        <ModalCloseButton color="gray.800"/>
+        <ModalBody className="lumino-purple">
           <VStack spacing={4} align="stretch">
-            <Box>
-              <Text fontWeight="bold">Job Name : </Text>
+            <Box className="lumino-purple-border">
+              <Text fontWeight="bold">Job Name:</Text>
               <Input
                 value={jobName}
                 onChange={(e) => setJobName(e.target.value)}
@@ -193,6 +195,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
             <Box>
               <Text fontWeight="bold">Base Model</Text>
               <Select
+                style={{ borderColor: "#4e00a6" }}
                 placeholder="Select"
                 value={selectedBaseModel}
                 onChange={(e) => setSelectedBaseModel(e.target.value)}
@@ -208,6 +211,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
             <Box>
               <Text fontWeight="bold">Dataset</Text>
               <Select
+                style={{ borderColor: "#4e00a6" }}
                 placeholder="Select"
                 value={selectedDatasets}
                 onChange={(e) => setSelectedDatasets(e.target.value)}
@@ -277,7 +281,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
               )}
             </Box> */}
 
-            <Box>
+            <Box className="lumino-purple-border">
               <Text fontWeight="bold">Seed</Text>
               <Input
                 value={seed}
@@ -289,7 +293,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
             <Box>
               <Text fontWeight="bold">Hyperparameter Tuning</Text>
               <VStack spacing={4} align="stretch">
-                <Box>
+                <Box className="lumino-purple-dark">
                   <Text>Number of epochs</Text>
                   <Slider
                     min={0}
@@ -298,14 +302,24 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                     value={numEpochs}
                     onChange={(value) => setNumEpochs(value)}
                   >
-                    <SliderTrack>
-                      <SliderFilledTrack />
+
+                    <SliderTrack color="purple">
+                      <SliderFilledTrack bg="#4e00a6" />
                     </SliderTrack>
-                    <SliderThumb />
+                    <SliderThumb bg="#4e00a6" />
+                    <SliderMark
+                      value={numEpochs}
+                      textAlign='center'
+                      color="#4e00a6"
+                      mt='2'
+                      ml='-6'
+                      w='12'
+                    >
+                      {numEpochs}
+                    </SliderMark>
                   </Slider>
-                  <Text textAlign="right">{numEpochs}</Text>
                 </Box>
-                <Box>
+                <Box className="lumino-purple-dark">
                   <Text>Batch Size</Text>
                   <Slider
                     min={0}
@@ -315,13 +329,22 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                     onChange={(value) => setBatchSize(value)}
                   >
                     <SliderTrack>
-                      <SliderFilledTrack />
+                      <SliderFilledTrack bg="#4e00a6" />
                     </SliderTrack>
-                    <SliderThumb />
+                    <SliderThumb bg="#4e00a6" />
+                    <SliderMark
+                      value={batchSize}
+                      textAlign='center'
+                      color="#4e00a6"
+                      mt='2'
+                      ml='-6'
+                      w='12'
+                    >
+                      {batchSize}
+                    </SliderMark>
                   </Slider>
-                  <Text textAlign="right">{batchSize}</Text>
                 </Box>
-                <Box>
+                <Box className="lumino-purple-dark">
                   <Text>Learning Rate</Text>
                   <Slider
                     min={0}
@@ -331,22 +354,32 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                     onChange={(value) => setLearningRate(value)}
                   >
                     <SliderTrack>
-                      <SliderFilledTrack />
+                      <SliderFilledTrack bg="#4e00a6" />
                     </SliderTrack>
-                    <SliderThumb />
+                    <SliderThumb bg="#4e00a6" />
+                    <SliderMark
+                      value={learningRate}
+                      textAlign='center'
+                      color="#4e00a6"
+                      mt='2'
+                      ml='-6'
+                      w='12'
+                    >
+                      {learningRate}
+                    </SliderMark>
                   </Slider>
-                  <Text textAlign="right">{learningRate}</Text>
                 </Box>
               </VStack>
             </Box>
           </VStack>
         </ModalBody>
         <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>
+          <Button bg="#F2F2F2" color="black" mr={3} onClick={onClose}>
             Cancel
           </Button>
           <Button
-            colorScheme="purple"
+            color="white"
+            bg="#4e00a6"
             onClick={handleCreateJob}
             isLoading={isSubmitting}
             loadingText="Creating..."
