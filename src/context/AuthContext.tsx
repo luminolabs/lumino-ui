@@ -16,7 +16,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const checkLoginStatus = async () => {
     try {
-      const userData = await fetchWithAuth('/v1/users/me');
+      const userData = await fetchWithAuth('/users/me');
       setIsLoggedIn(true);
       setUserName(userData.name);
     } catch (error) {

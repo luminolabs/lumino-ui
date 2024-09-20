@@ -12,6 +12,9 @@ const Header = () => {
   const handleLogin = () => {
     window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth0/login`;
   };
+  const handleLogout = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth0/logout`;
+  };
 
   return (
     <Box as="header" bg="white" boxShadow="sm" py={4} px={8}>
@@ -34,15 +37,15 @@ const Header = () => {
             Docs
           </Link>
           {isLoggedIn ? (
-            <Menu>
-              <MenuButton as={Button} rightIcon={<ChevronDownIcon />}>
-                {userName}
-              </MenuButton>
-              <MenuList>
-                <MenuItem as={NextLink} href="/dashboard">Dashboard</MenuItem>
-                <MenuItem onClick={logout}>Logout</MenuItem>
-              </MenuList>
-            </Menu>
+            <Button
+              color="white"
+              bg="#4e00a6"
+              _hover={{ bg: "#0005A6" }}
+              width={isMobile ? "100%" : "auto"}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
           ) : (
             <Button
               color="white"
