@@ -71,7 +71,7 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
     formData.append("file", file);
     formData.append("name", datasetName.trim());
     if (datasetDescription.trim()) {
-      formData.append("dataset_description", datasetDescription.trim());
+      formData.append("description", datasetDescription.trim());
     }
 
     try {

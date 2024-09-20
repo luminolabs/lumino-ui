@@ -17,3 +17,19 @@ body {
   margin: 0;
   padding: 0;
 }
+
+.lumino-purple {
+  color: #4e00a6;
+}
+
+.lumino-purple-dark {
+  color: #261641;
+}
+
+.lumino-purple-border {
+  border-color: #4e00a6;
+}
+
+.lumino-purple-shadow {
+  color: #d6c6f6;
+}
