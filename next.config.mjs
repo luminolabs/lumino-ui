@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-  },
   env: {
     API_BASE_URL: process.env.LUI_API_BASE_URL,
   },
