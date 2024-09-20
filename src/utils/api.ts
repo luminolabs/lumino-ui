@@ -6,6 +6,7 @@ export async function fetchWithAuth(endpoint: string, options: RequestInit = {})
   const headers = new Headers(options.headers);
   headers.set('Authorization', `Bearer ${token}`);
 
+  console.log('Using env : ', `${process.env.API_BASE_URL}`);
   console.log('Sending request to:', `${API_BASE_URL}${endpoint}`);
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
