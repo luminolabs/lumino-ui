@@ -6,6 +6,7 @@ services:
     ports:
       - "3000:3000"
     environment:
-      - LUI_API_BASE_URL=${LUI_API_BASE_URL}
+      - LUI_ENV=${LUI_ENV:-local}
+      - LUI_API_BASE_URL=${LUI_API_BASE_URL:-http://localhost:5100/v1}
     extra_hosts:
       - "localhost:host-gateway"
