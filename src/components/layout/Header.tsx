@@ -1,19 +1,48 @@
-import React from 'react';
-import { Box, Flex, Spacer, Link, Button, useBreakpointValue, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Box, Flex, Spacer, Link, Button, useBreakpointValue, Spinner } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 
 const Header = () => {
   const { isLoggedIn, userName, logout } = useAuth();
   const isMobile = useBreakpointValue({ base: true, md: false });
+  const [apiBaseUrl, setApiBaseUrl] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchApiSettings = async () => {
+      try {
+        const response = await fetch('/api/settings');
+        if (!response.ok) {
+          throw new Error('Failed to fetch API settings');
+        }
+        const settings = await response.json();
+        setApiBaseUrl(settings.API_BASE_URL);
+      } catch (error) {
+        console.error('Failed to fetch API settings:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchApiSettings();
+  }, []);
 
   const handleLogin = () => {
-    window.location.href = `${process.env.API_BASE_URL}auth0/login`;
+    if (apiBaseUrl) {
+      window.location.href = `${apiBaseUrl}v1/auth0/login`;
+    } else {
+      console.error('API base URL is not available');
+    }
   };
+
   const handleLogout = () => {
-    window.location.href = `${process.env.API_BASE_URL}auth0/logout`;
+    if (apiBaseUrl) {
+      window.location.href = `${apiBaseUrl}v1/auth0/logout`;
+    } else {
+      console.error('API base URL is not available');
+    }
   };
 
   return (
@@ -36,7 +65,9 @@ const Header = () => {
           <Link as={NextLink} href="https://docs.luminolabs.ai" target="_blank" color="gray.600">
             Docs
           </Link>
-          {isLoggedIn ? (
+          {isLoading ? (
+            <Spinner size="sm" color="#4e00a6" />
+          ) : isLoggedIn ? (
             <Button
               color="white"
               bg="#4e00a6"
@@ -53,6 +84,7 @@ const Header = () => {
               _hover={{ bg: "#0005A6" }}
               width={isMobile ? "100%" : "auto"}
               onClick={handleLogin}
+              isDisabled={!apiBaseUrl}
             >
               Login
             </Button>

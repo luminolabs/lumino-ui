@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const API_BASE_URL = process.env.LUI_API_BASE_URL || 'http://localhost:5100/v1/';
+const API_BASE_URL = process.env.LUI_API_BASE_URL || 'http://localhost:5100/';
 
 export async function GET(request: NextRequest) {
   console.log('GET request received');
@@ -28,10 +28,10 @@ export async function OPTIONS(request: NextRequest) {
 
 async function handleRequest(request: NextRequest) {
   const path = request.nextUrl.pathname.replace('/api/proxy', '');
-  console.log('Proxying request to:', `${API_BASE_URL}${path}`);
-
+  
   const url = new URL(path, API_BASE_URL);
   url.search = request.nextUrl.search;
+  console.log('URL :', `${url}`);
 
   const headers = new Headers(request.headers);
   headers.set('host', new URL(API_BASE_URL).host);
