@@ -7,6 +7,3 @@ COPY . .
 
 # Install dependencies
 RUN yarn install --frozen-lockfile
-
-# Build application
-RUN yarn build
