@@ -30,7 +30,7 @@ const BillingSettings = () => {
 
   const handleAddCredits = () => {
     // Redirect to the billing URL
-    const redirectUrl = `/api/proxy/billing/credits-add?amount_dollars=${amount}`;
+    const redirectUrl = `/api/proxy/v1/billing/credits-add?amount_dollars=${amount}`;
     window.location.href = redirectUrl;
   };
 
