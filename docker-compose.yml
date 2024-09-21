@@ -1,7 +1,7 @@
 services:
   dashboard:
     image: us-central1-docker.pkg.dev/neat-airport-407301/lum-docker-images/lumino-dashboard:latest
-    build: .
+#    build: .
     command: yarn start
     ports:
       - "3000:3000"
