@@ -28,10 +28,28 @@ const BillingSettings = () => {
     fetchUserData();
   }, []);
 
-  const handleAddCredits = () => {
-    // Redirect to the billing URL
+  const handleAddCredits = async () => {
     const redirectUrl = `/api/proxy/v1/billing/credits-add?amount_dollars=${amount}`;
-    window.location.href = redirectUrl;
+    try {
+      const response = await fetch(redirectUrl, { 
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.redirect_url) {
+          // Redirect to the URL provided by the server
+          window.location.href = data.redirect_url;
+        } else {
+          console.error('No redirect URL provided');
+        }
+      } else {
+        console.error('Error response:', response.status);
+      }
+    } catch (error) {
+      console.error('Error adding credits:', error);
+      // Handle error (e.g., show an error message to the user)
+    }
   };
 
   const fetchUserData = async () => {
