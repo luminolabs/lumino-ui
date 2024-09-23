@@ -17,9 +17,9 @@ async function handleRequest(request: NextRequest) {
       method: request.method,
       headers: headers,
       credentials: 'include',
+      redirect: 'manual', // Don't automatically follow redirects
     };
 
-    // Only add the body and duplex option for methods that typically have a body
     if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(request.method)) {
       fetchOptions.body = request.body;
       fetchOptions.duplex = 'half';
@@ -27,15 +27,22 @@ async function handleRequest(request: NextRequest) {
 
     const response = await fetch(url, fetchOptions as RequestInit);
 
+    // Check if the response is a redirect
+    if (response.status === 302) {
+      const location = response.headers.get('Location');
+      if (location) {
+        // If it's a redirect, return the redirect URL in the response
+        return NextResponse.json({ redirect_url: location }, { status: 200 });
+      }
+    }
+
     const responseHeaders = new Headers(response.headers);
-    responseHeaders.set('Access-Control-Allow-Origin', 'https://app.luminolabs.ai');
+    responseHeaders.set('Access-Control-Allow-Origin', request.headers.get('origin') || '');
     responseHeaders.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     responseHeaders.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     responseHeaders.set('Access-Control-Allow-Credentials', 'true');
 
-    const responseData = await response.text();
-
-    return new NextResponse(responseData, {
+    return new NextResponse(response.body, {
       status: response.status,
       statusText: response.statusText,
       headers: responseHeaders,
