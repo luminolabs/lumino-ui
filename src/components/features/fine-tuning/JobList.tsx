@@ -1,5 +1,3 @@
-"use client";
-
 import { useState, useEffect } from "react";
 import {
   VStack,
@@ -9,11 +7,10 @@ import {
   useToast,
   Flex,
   Button,
-  useBreakpointValue,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { fetchWithAuth } from "@/utils/api";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 interface Job {
@@ -31,10 +28,6 @@ interface ApiResponse {
   };
 }
 
-interface JobListContentProps {
-  refreshTrigger: number;
-}
-
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <Box role="alert" p={4}>
@@ -47,7 +40,12 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   );
 }
 
-const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
+interface JobListContentProps {
+  refreshTrigger: number;
+  onFirstJobLoad: (jobName: string | null) => void;
+}
+
+const JobListContent: React.FC<JobListContentProps> = ({ refreshTrigger, onFirstJobLoad }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
@@ -55,7 +53,7 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
   const params = useParams();
   const selectedJobName = params?.jobName as string;
   const toast = useToast();
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const router = useRouter();
 
   useEffect(() => {
     const fetchJobs = async () => {
@@ -64,12 +62,19 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
         const response: ApiResponse = await fetchWithAuth(
           `/fine-tuning?page=${currentPage}`
         );
-        // Sort jobs in descending order based on created_at timestamp
         const sortedJobs = response.data.sort((a, b) => 
           new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
         );
         setJobs(sortedJobs);
         setTotalPages(response.pagination.total_pages);
+
+        // If there's at least one job and no job is currently selected, select the first one
+        if (sortedJobs.length > 0 && !selectedJobName) {
+          onFirstJobLoad(sortedJobs[0].name);
+          router.push(`/fine-tuning/${sortedJobs[0].name}`);
+        } else if (sortedJobs.length === 0) {
+          onFirstJobLoad(null);
+        }
       } catch (error) {
         console.error("Error fetching jobs:", error);
         toast({
@@ -79,20 +84,21 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
           duration: 5000,
           isClosable: true,
         });
+        onFirstJobLoad(null);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchJobs();
-  }, [currentPage, toast, refreshTrigger]);
+  }, [currentPage, toast, refreshTrigger, selectedJobName, onFirstJobLoad, router]);
 
   if (isLoading) {
     return <Spinner />;
   }
 
   return (
-    <VStack align="stretch" spacing={0} height={isMobile ? "auto" : "100%"}>
+    <VStack align="stretch" spacing={0} height="100%">
       {jobs.map((job) => (
         <Link key={job.id} href={`/fine-tuning/${job.name}`} passHref>
           <Box
@@ -117,7 +123,7 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
       ))}
       <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200" marginTop="auto">
         <Text fontSize="sm" color="gray.600">
-          {totalPages == 0 ? 
+          {totalPages === 0 ? 
             `Page 0 of 0` :
             `Page ${currentPage} of ${totalPages}`
           }
@@ -129,12 +135,13 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
 
 interface JobListProps {
   refreshTrigger: number;
+  onFirstJobLoad: (jobName: string | null) => void;
 }
 
-const JobList: React.FC<JobListProps> = ({ refreshTrigger }) => {
+const JobList: React.FC<JobListProps> = ({ refreshTrigger, onFirstJobLoad }) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <JobListContent refreshTrigger={refreshTrigger} />
+      <JobListContent refreshTrigger={refreshTrigger} onFirstJobLoad={onFirstJobLoad} />
     </ErrorBoundary>
   );
 };
