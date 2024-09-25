@@ -180,7 +180,6 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
       <ModalOverlay />
       <ModalContent style={{ background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10 }}>
         <ModalHeader color="#261641">Create a fine-tuned model</ModalHeader>
-        <ModalCloseButton color="#261641"/>
         <ModalBody className="lumino-purple">
           <VStack spacing={4} align="stretch">
             <Box className="lumino-purple-border">

@@ -109,7 +109,6 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
       <ModalOverlay />
       <ModalContent style={{ background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10 }}>
         <ModalHeader color="#261641">Upload Dataset</ModalHeader>
-        <ModalCloseButton color="#261641" />
         <ModalBody color="#4e00a6">
           <VStack spacing={4} align="stretch">
             <FormControl isInvalid={!!nameError} isRequired>
