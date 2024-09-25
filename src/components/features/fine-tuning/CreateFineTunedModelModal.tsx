@@ -62,7 +62,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   const [batchSize, setBatchSize] = useState<number>(2);
   const [learningRate, setLearningRate] = useState<number>(2);
   const [shuffle, setShuffle] = useState<boolean>(true);
-  const [seed, setSeed] = useState<string>("Random");
+  const [seed, setSeed] = useState<number>(9347235);
   const [numEpochs, setNumEpochs] = useState<number>(1);
   const [useLora, setUseLora] = useState<boolean>(true);
   const [useQlora, setUseQlora] = useState<boolean>(false);
@@ -287,7 +287,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
               <Input
               color="black"
                 value={seed}
-                onChange={(e) => setSeed(e.target.value)}
+                onChange={(e) => setSeed(Number(e.target.value))}
                 placeholder="Random"
                 _placeholder={{ color: "gray.400" }}
               />
@@ -306,7 +306,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                     onChange={(value) => setNumEpochs(value)}
                   >
 
-                    <SliderTrack color="purple">
+                    <SliderTrack color="purple" bg="#F2F2F2">
                       <SliderFilledTrack bg="#4e00a6" />
                     </SliderTrack>
                     <SliderThumb bg="#4e00a6" />
@@ -331,7 +331,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                     value={batchSize}
                     onChange={(value) => setBatchSize(value)}
                   >
-                    <SliderTrack>
+                    <SliderTrack color="purple" bg="#F2F2F2">
                       <SliderFilledTrack bg="#4e00a6" />
                     </SliderTrack>
                     <SliderThumb bg="#4e00a6" />
@@ -356,7 +356,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                     value={learningRate}
                     onChange={(value) => setLearningRate(value)}
                   >
-                    <SliderTrack>
+                    <SliderTrack color="purple" bg="#F2F2F2">
                       <SliderFilledTrack bg="#4e00a6" />
                     </SliderTrack>
                     <SliderThumb bg="#4e00a6" />

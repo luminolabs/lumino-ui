@@ -3,10 +3,7 @@ import { Box, VStack, Button, Collapse, Text } from '@chakra-ui/react';
 import {
   CpuChipIcon,
   ServerIcon,
-  ChartBarIcon,
-  Cog6ToothIcon,
-  ChevronDownIcon,
-  ChevronUpIcon
+  ChartBarSquareIcon
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -60,7 +57,7 @@ const Sidebar = () => {
           <Button
             style={{ alignContent: "center" }}
             as="a"
-            leftIcon={<IconWrapper><ChartBarIcon /></IconWrapper>}
+            leftIcon={<IconWrapper><ChartBarSquareIcon /></IconWrapper>}
             justifyContent="flex-start"
             bg={isActive('/usage') ? '#D6C6F6' : 'transparent'}
             color={isActive('/usage') ? '#4E00A6' : '#261641'}
