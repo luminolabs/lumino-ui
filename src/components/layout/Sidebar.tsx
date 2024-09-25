@@ -12,22 +12,8 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
 const Sidebar = () => {
-  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const pathname = usePathname();
-  const router = useRouter();
-
   const isActive = (path: string) => pathname.startsWith(path);
-
-  useEffect(() => {
-    setIsSettingsOpen(pathname.startsWith('/settings'));
-  }, [pathname]);
-
-  const handleSettingsClick = () => {
-    if (!isSettingsOpen) {
-      router.push('/settings');
-    }
-    setIsSettingsOpen(!isSettingsOpen);
-  };
 
   const IconWrapper = ({ children }: { children: React.ReactNode }) => (
     <Box width="24px" height="24px">
@@ -86,34 +72,6 @@ const Sidebar = () => {
             </p>
           </Button>
         </Link>
-        <Button
-          leftIcon={<IconWrapper><Cog6ToothIcon /></IconWrapper>}
-          rightIcon={isSettingsOpen ? <ChevronUpIcon /> : <ChevronDownIcon />}
-          justifyContent="space-between"
-          bg={isActive('/settings') ? '#E7E0FD' : 'transparent'}
-          color={isActive('/settings') ? '#6B46C1' : 'gray.600'}
-          _hover={{ bg: '#E7E0FD', color: '#6B46C1' }}
-          onClick={handleSettingsClick}
-          w="100%"
-        >
-          Settings
-        </Button>
-        <Collapse in={isSettingsOpen}>
-          <VStack align="stretch" pl={6} mt={2} spacing={2}>
-            <Link href="/settings" passHref>
-            </Link>
-            {/* <Link href="/settings/team" passHref>
-              <Button as="a" variant="ghost" justifyContent="flex-start" size="sm"
-                bg={isActive('/settings/team') ? '#E7E0FD' : 'transparent'}
-                color={isActive('/settings/team') ? '#6B46C1' : 'gray.600'}
-                _hover={{ bg: '#E7E0FD', color: '#6B46C1' }}
-                w="100%"
-              >
-                Team
-              </Button>
-            </Link> */}
-          </VStack>
-        </Collapse>
       </VStack>
     </Box>
   );

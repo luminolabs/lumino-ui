@@ -1,12 +1,12 @@
 import React from 'react';
-import { Box, Flex, Spacer, Link, Button, useBreakpointValue, useToast } from '@chakra-ui/react';
+import { Box, Flex, Spacer, Link, IconButton, Menu, MenuButton, MenuList, MenuItem, useToast } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 const Header = () => {
-  const { isLoggedIn, userName, logout } = useAuth();
-  const isMobile = useBreakpointValue({ base: true, md: false });
+  const { isLoggedIn, logout } = useAuth();
   const toast = useToast();
 
   const handleLogout = async () => {
@@ -45,25 +45,29 @@ const Header = () => {
             Docs
           </Link>
           {isLoggedIn ? (
-            <Button
-              color="white"
-              bg="#4e00a6"
-              _hover={{ bg: "#0005A6" }}
-              width={isMobile ? "100%" : "auto"}
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                icon={<Cog6ToothIcon style={{ width: '24px', height: '24px' }} />}
+                color="black"
+                _hover={{ color: "#0005A6" }}
+                aria-label="Settings"
+              />
+              <MenuList bg="white">
+                <NextLink href="/settings" passHref>
+                  <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Settings</MenuItem>
+                </NextLink>
+                <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} onClick={handleLogout}>Logout</MenuItem>
+              </MenuList>
+            </Menu>
           ) : (
-            <Button
+            <IconButton
+              icon={<Cog6ToothIcon style={{ width: '24px', height: '24px' }} />}
               color="white"
-              bg="#4e00a6"
-              _hover={{ bg: "#0005A6" }}
-              width={isMobile ? "100%" : "auto"}
+              _hover={{ bg: '#D6C6F6', color: '#4E00A6' }}
               onClick={() => window.location.reload()}
-            >
-              Login
-            </Button>
+              aria-label="Login"
+            />
           )}
         </Flex>
       </Flex>

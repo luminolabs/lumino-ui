@@ -8,6 +8,7 @@ import ErrorFallback from "@/components/ErrorFallback";
 import Sidebar from "@/components/layout/Sidebar";
 import Header from "@/components/layout/Header";
 import { AuthProvider, useAuth } from '@/context/AuthContext';
+import { dmSans } from '@/styles/fonts';
 
 const AppContent = ({ children }: { children: React.ReactNode }) => {
   const { isLoading } = useAuth();
@@ -39,7 +40,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={dmSans.className}>
       <body>
         <ErrorBoundary FallbackComponent={ErrorFallback}>
           <AuthProvider>
