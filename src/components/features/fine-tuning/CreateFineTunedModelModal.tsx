@@ -21,9 +21,14 @@ import {
   VStack,
   useToast,
   SliderMark,
+  MenuButton,
+  Menu,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
 import { fetchWithAuth } from "@/utils/api";
 import "@/app/global.css"
+import { ChevronDownIcon } from "@chakra-ui/icons";
 
 interface CreateFineTunedModelModalProps {
   isOpen: boolean;
@@ -175,17 +180,42 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   //     }
   //   };
 
+  const inputStyle = {
+    borderColor: "gray.300",
+    _hover: { borderColor: "#4e00a6" },
+    _focus: { borderColor: "#4e00a6", boxShadow: "0 0 0 1px #4e00a6" },
+  };
+
+  const labelStyle = {
+    color: "#4e00a6", // Dark purple color for better visibility
+    fontWeight: "700",
+    marginBottom: "2px",
+  };
+
+  const buttonStyle = {
+    bg: "white",
+    color: "gray.800",
+    borderColor: "gray.300",
+    borderWidth: "1px",
+    _hover: { borderColor: "#4e00a6" },
+    _active: { bg: "gray.100" },
+    width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" >
+    <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent style={{ background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10 }}>
         <ModalHeader color="#261641">Create a fine-tuned model</ModalHeader>
-        <ModalBody className="lumino-purple">
+        <ModalCloseButton />
+        <ModalBody>
           <VStack spacing={4} align="stretch">
-            <Box className="lumino-purple-border">
-              <Text fontWeight="bold">Job Name:</Text>
+            <Box>
+              <Text {...labelStyle}>Job Name</Text>
               <Input
-                color="black"
+                {...inputStyle}
                 value={jobName}
                 onChange={(e) => setJobName(e.target.value)}
                 placeholder="my-model-1"
@@ -194,37 +224,48 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
             </Box>
 
             <Box>
-              <Text fontWeight="bold">Base Model</Text>
-              <Select
-                style={{ color: "black", borderColor: "#4e00a6" }}
-                placeholder="Select"
-                value={selectedBaseModel}
-                onChange={(e) => setSelectedBaseModel(e.target.value)}
-              >
-                {baseModels.map((model) => (
-                  <option key={model.id} value={model.name}>
-                    {model.name + " (" + model.description + ")"}
-                  </option>
-                ))}
-              </Select>
+              <Text {...labelStyle}>Base Model</Text>
+              <Menu>
+                <MenuButton as={Button} {...buttonStyle} rightIcon={<ChevronDownIcon />}>
+                  {selectedBaseModel || "Select Base Model"}
+                </MenuButton>
+                <MenuList bg="white">
+                  {baseModels.map((model) => (
+                    <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key={model.id} onClick={() => setSelectedBaseModel(model.name)}>
+                      {model.name} ({model.description})
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
             </Box>
 
             <Box>
-              <Text fontWeight="bold">Dataset</Text>
-              <Select
-                style={{ color: "black", borderColor: "#4e00a6" }}
-                placeholder="Select"
-                value={selectedDatasets}
-                onChange={(e) => setSelectedDatasets(e.target.value)}
-              >
-                {datasets.map((model) => (
-                  <option key={model.name} value={model.name}>
-                    {model.name + " (" + model.description + ")"}
-                  </option>
-                ))}
-              </Select>
+              <Text {...labelStyle}>Dataset</Text>
+              <Menu>
+                <MenuButton as={Button} {...buttonStyle} rightIcon={<ChevronDownIcon />}>
+                  {selectedDatasets || "Select Dataset"}
+                </MenuButton>
+                <MenuList bg="white">
+                  {datasets.map((dataset) => (
+                    <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key={dataset.id} onClick={() => setSelectedDatasets(dataset.name)}>
+                      {dataset.name} ({dataset.description})
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
             </Box>
 
+            <Box>
+              <Text {...labelStyle}>Seed</Text>
+              <Input
+                {...inputStyle}
+                color="black"
+                value={seed}
+                onChange={(e) => setSeed(Number(e.target.value))}
+                placeholder="Random"
+                _placeholder={{ color: "gray.400" }}
+              />
+            </Box>
             {/* <Box>
               <Text fontWeight="bold">Training Data</Text>
               <Text fontSize="sm" color="gray.500">
@@ -282,19 +323,8 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
               )}
             </Box> */}
 
-            <Box className="lumino-purple-border">
-              <Text fontWeight="bold">Seed</Text>
-              <Input
-              color="black"
-                value={seed}
-                onChange={(e) => setSeed(Number(e.target.value))}
-                placeholder="Random"
-                _placeholder={{ color: "gray.400" }}
-              />
-            </Box>
-
             <Box>
-              <Text fontWeight="bold">Hyperparameter Tuning</Text>
+              <Text {...labelStyle} fontWeight="bold">Hyperparameter Tuning</Text>
               <VStack spacing={4} align="stretch">
                 <Box className="lumino-purple-dark">
                   <Text>Number of epochs</Text>

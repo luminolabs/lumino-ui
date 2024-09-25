@@ -27,6 +27,12 @@ body {
 }
 
 .lumino-purple-border {
+  border-color: #F2F2F2;
+}
+.lumino-purple-border:hover {
+  border-color: #4e00a6;
+}
+.lumino-purple-border:active {
   border-color: #4e00a6;
 }
 
