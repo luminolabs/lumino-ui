@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import { Suspense } from 'react';
 import UploadDatasetModal from '@/components/features/datasets/UploadDatasetModal';
+import { PlusCircleIcon } from '@heroicons/react/24/outline';
 
 const DatasetList = dynamic(() => import('@/components/features/datasets/DatasetList'), {
   loading: () => <Spinner />,
@@ -17,6 +18,12 @@ const DatasetDetails = dynamic(() => import('@/components/features/datasets/Data
   loading: () => <Spinner />,
   ssr: false
 });
+
+const IconWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Box width="24px" height="24px">
+    {children}
+  </Box>
+);
 
 export default function DatasetsPage() {
   const params = useParams();
@@ -36,7 +43,7 @@ export default function DatasetsPage() {
       <Flex mb={6} direction={isMobile ? "column" : "row"} justify="space-between" align={isMobile ? "stretch" : "center"}>
         <Heading size="lg" color="#261641" mb={isMobile ? 4 : 0}>Datasets</Heading>
         <Button 
-          leftIcon={<FiPlus />}
+          leftIcon={<IconWrapper> <PlusCircleIcon /></IconWrapper>}
           color="white"
           bg="#4e00a6"
           _hover={{ bg: "#0005A6" }}

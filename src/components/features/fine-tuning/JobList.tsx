@@ -111,7 +111,7 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
           </Box>
         </Link>
       ))}
-      <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200">
+      <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200" marginTop="auto">
         <Text fontSize="sm" color="gray.600">
           {totalPages == 0 ? 
             `Page 0 of 0` :

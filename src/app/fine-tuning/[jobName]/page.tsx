@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import { Suspense } from 'react';
 import CreateFineTunedModelModal from '@/components/features/fine-tuning/CreateFineTunedModelModal';
+import { PlusCircleIcon } from '@heroicons/react/24/outline';
 
 const JobList = dynamic(() => import('@/components/features/fine-tuning/JobList'), {
   loading: () => <Spinner />,
@@ -17,6 +18,12 @@ const JobDetails = dynamic(() => import('@/components/features/fine-tuning/JobDe
   loading: () => <Spinner />,
   ssr: false
 });
+
+const IconWrapper = ({ children }: { children: React.ReactNode }) => (
+  <Box width="24px" height="24px">
+    {children}
+  </Box>
+);
 
 export default function FineTuningPage() {
   const params = useParams();
@@ -36,7 +43,7 @@ export default function FineTuningPage() {
       <Flex mb={6} direction={isMobile ? "column" : "row"} justify="space-between" align={isMobile ? "stretch" : "center"}>
         <Heading size="lg" color="#261641" mb={isMobile ? 4 : 0}>Fine-tuning</Heading>
         <Button 
-          leftIcon={<FiPlus />}
+          leftIcon={<IconWrapper> <PlusCircleIcon /></IconWrapper>}
           color="white"
           bg="#4e00a6"
           _hover={{ bg: "#0005A6" }}
