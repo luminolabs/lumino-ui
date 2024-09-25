@@ -36,45 +36,54 @@ const Sidebar = () => {
   );
 
   return (
-    <Box width="200px" bg="gray.100" height="auto" p={4} overflowY="auto">
-      <VStack align="stretch" spacing={2}>
+    <Box width="250px" bg="gray.100" height="auto" p={4} overflowY="auto">
+      <VStack align="stretch" spacing={2} paddingLeft="inherit" paddingRight="inherit">
         <Link href="/fine-tuning" passHref>
-          <Button 
-            as="a" 
+          <Button
+            style={{ alignContent: "center" }}
+            as="a"
             leftIcon={<IconWrapper><CpuChipIcon /></IconWrapper>}
-            justifyContent="flex-start" 
-            bg={isActive('/fine-tuning') ? '#E7E0FD' : 'transparent'}
-            color={isActive('/fine-tuning') ? '#6B46C1' : 'gray.600'}
-            _hover={{ bg: '#E7E0FD', color: '#6B46C1' }}
+            justifyContent="flex-start"
+            bg={isActive('/fine-tuning') ? '#D6C6F6' : 'transparent'}
+            color={isActive('/fine-tuning') ? '#4E00A6' : '#261641'}
+            _hover={{ bg: '#D6C6F6', color: '#4E00A6' }}
             w="100%"
           >
-            Fine-tuning
+            <p style={{ margin: "3%" }}>
+              Fine-tuning
+            </p>
           </Button>
         </Link>
         <Link href="/datasets" passHref>
-          <Button 
-            as="a" 
+          <Button
+            style={{ alignContent: "center" }}
+            as="a"
             leftIcon={<IconWrapper><ServerIcon /></IconWrapper>}
-            justifyContent="flex-start" 
-            bg={isActive('/datasets') ? '#E7E0FD' : 'transparent'}
-            color={isActive('/datasets') ? '#6B46C1' : 'gray.600'}
-            _hover={{ bg: '#E7E0FD', color: '#6B46C1' }}
+            justifyContent="flex-start"
+            bg={isActive('/datasets') ? '#D6C6F6' : 'transparent'}
+            color={isActive('/datasets') ? '#4E00A6' : '#261641'}
+            _hover={{ bg: '#D6C6F6', color: '#4E00A6' }}
             w="100%"
           >
-            Datasets
+            <p style={{ margin: "3%" }}>
+              Datasets
+            </p>
           </Button>
         </Link>
         <Link href="/usage" passHref>
-          <Button 
-            as="a" 
+          <Button
+            style={{ alignContent: "center" }}
+            as="a"
             leftIcon={<IconWrapper><ChartBarIcon /></IconWrapper>}
-            justifyContent="flex-start" 
-            bg={isActive('/usage') ? '#E7E0FD' : 'transparent'}
-            color={isActive('/usage') ? '#6B46C1' : 'gray.600'}
-            _hover={{ bg: '#E7E0FD', color: '#6B46C1' }}
+            justifyContent="flex-start"
+            bg={isActive('/usage') ? '#D6C6F6' : 'transparent'}
+            color={isActive('/usage') ? '#4E00A6' : '#261641'}
+            _hover={{ bg: '#D6C6F6', color: '#4E00A6' }}
             w="100%"
           >
-            Usage
+            <p style={{ margin: "3%" }}>
+              Usage
+            </p>
           </Button>
         </Link>
         <Button
@@ -91,7 +100,7 @@ const Sidebar = () => {
         </Button>
         <Collapse in={isSettingsOpen}>
           <VStack align="stretch" pl={6} mt={2} spacing={2}>
-          <Link href="/settings" passHref>
+            <Link href="/settings" passHref>
             </Link>
             {/* <Link href="/settings/team" passHref>
               <Button as="a" variant="ghost" justifyContent="flex-start" size="sm"
