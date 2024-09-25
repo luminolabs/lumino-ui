@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
+import { Box, Text, Spinner, useToast, Grid, GridItem, useBreakpointValue, HStack, Icon, VStack, Flex, SimpleGrid } from '@chakra-ui/react';
 import { fetchWithAuth } from '@/utils/api';
+import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, IdentificationIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 
 interface JobDetail {
   id: string;
@@ -30,7 +31,6 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
   const [jobDetails, setJobDetails] = useState<JobDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
-  const columns = useBreakpointValue({ base: 1, md: 2 });
 
   useEffect(() => {
     const fetchJobDetails = async () => {
@@ -64,33 +64,46 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     return <Text>Job not found</Text>;
   }
 
-  const DetailItem = ({ label, value }: { label: string; value: string | number }) => (
-    <GridItem>
-      <Text fontWeight="semibold" color="gray.600">{label}</Text>
-      <Text color="gray.900">{value}</Text>
-    </GridItem>
+  const DetailItem = ({ icon, label, value, color = "gray.600" }: { icon: React.ElementType; label: string; value: string | number; color?: string }) => (
+    <Flex align="center" py={2}>
+      <Icon as={icon} boxSize={5} color={color} mr={3} />
+      <Box>
+        <Text fontSize="xs" fontWeight="medium" color="gray.500">{label}</Text>
+        <Text fontSize="sm" fontWeight="semibold" color={color}>{value}</Text>
+      </Box>
+    </Flex>
   );
 
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'new': return 'blue.500';
+      case 'running': return 'green.500';
+      case 'completed': return 'purple.500';
+      case 'failed': return 'red.500';
+      default: return 'gray.500';
+    }
+  };
+
   return (
-    <Box>
-      <Grid templateColumns={`repeat(${columns}, 1fr)`} gap={6}>
-        <DetailItem label="Name" value={jobDetails.name} />
-        <DetailItem label="Status" value={jobDetails.status} />
-        <DetailItem label="Base Model" value={jobDetails.base_model_name} />
-        <DetailItem label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
-        <DetailItem label="Current Epoch" value={jobDetails.current_epoch} />
-        <DetailItem label="Current Step" value={jobDetails.current_step} />
-        <DetailItem label="Dataset Name" value={jobDetails.dataset_name} />
-        <DetailItem label="Metrics" value={jobDetails.metrics} />
-        <DetailItem label="Number of Tokens" value={jobDetails.num_tokens} />
-        <DetailItem label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
-        <DetailItem label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
-        <DetailItem label="Batch Size" value={jobDetails.parameters.batch_size} />
-        <DetailItem label="Use lora" value={jobDetails.parameters.use_lora.toString()} />
-        <DetailItem label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} />
-        <DetailItem label="Total Epochs" value={jobDetails.total_epochs} />
-        <DetailItem label="Total Steps" value={jobDetails.total_steps} />
-      </Grid>
+    <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
+      <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+        <DetailItem icon={IdentificationIcon} label="Name" value={jobDetails.name} />
+        <DetailItem icon={CheckCircleIcon} label="Status" value={jobDetails.status} color={getStatusColor(jobDetails.status)} />
+        <DetailItem icon={CpuChipIcon} label="Base Model" value={jobDetails.base_model_name} />
+        <DetailItem icon={CalendarIcon} label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
+        <DetailItem icon={ClockIcon} label="Current Epoch" value={jobDetails.current_epoch || 'N/A'} />
+        <DetailItem icon={ArrowPathIcon} label="Current Step" value={jobDetails.current_step || 'N/A'} />
+        <DetailItem icon={CircleStackIcon} label="Dataset Name" value={jobDetails.dataset_name} />
+        <DetailItem icon={ChartBarIcon} label="Metrics" value={jobDetails.metrics || 'N/A'} />
+        <DetailItem icon={HashtagIcon} label="Number of Tokens" value={jobDetails.num_tokens?.toLocaleString() || 'N/A'} />
+        <DetailItem icon={ArrowPathRoundedSquareIcon} label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
+        <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
+        <DetailItem icon={ViewColumnsIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
+        <DetailItem icon={CubeTransparentIcon} label="Use lora" value={jobDetails.parameters.use_lora.toString()} />
+        <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} />
+        <DetailItem icon={ArrowPathRoundedSquareIcon} label="Total Epochs" value={jobDetails.total_epochs || 'N/A'} />
+        <DetailItem icon={ForwardIcon} label="Total Steps" value={jobDetails.total_steps || 'N/A'} />
+      </SimpleGrid>
     </Box>
   );
 };
