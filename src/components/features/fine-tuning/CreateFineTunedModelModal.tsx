@@ -181,6 +181,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   //   };
 
   const inputStyle = {
+    color: "black",
     borderColor: "gray.300",
     _hover: { borderColor: "#4e00a6" },
     _focus: { borderColor: "#4e00a6", boxShadow: "0 0 0 1px #4e00a6" },
