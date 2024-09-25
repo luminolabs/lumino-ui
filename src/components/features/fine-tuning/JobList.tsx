@@ -64,7 +64,11 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
         const response: ApiResponse = await fetchWithAuth(
           `/fine-tuning?page=${currentPage}`
         );
-        setJobs(response.data);
+        // Sort jobs in descending order based on created_at timestamp
+        const sortedJobs = response.data.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setJobs(sortedJobs);
         setTotalPages(response.pagination.total_pages);
       } catch (error) {
         console.error("Error fetching jobs:", error);
@@ -126,7 +130,6 @@ const JobListContent: React.FC<JobListContentProps> = ({refreshTrigger}) => {
 interface JobListProps {
   refreshTrigger: number;
 }
-
 
 const JobList: React.FC<JobListProps> = ({ refreshTrigger }) => {
   return (

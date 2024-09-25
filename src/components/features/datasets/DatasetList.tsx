@@ -62,7 +62,10 @@ const DatasetListContent: React.FC<DatasetListContentProps> = ({refreshTrigger})
         const response: ApiResponse = await fetchWithAuth(
             `/datasets?page=${currentPage}`
         );
-        setDatasets(response.data);
+        const sortedDatasets = response.data.sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
+        setDatasets(sortedDatasets);
         setTotalPages(response.pagination.total_pages);
       } catch (error) {
         console.error("Error fetching datasets:", error);
