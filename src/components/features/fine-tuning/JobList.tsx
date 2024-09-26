@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   VStack,
   Box,
@@ -19,14 +19,12 @@ interface Job {
   name: string;
 }
 
-interface ApiResponse {
-  data: Job[];
-  pagination: {
-    total_pages: number;
-    current_page: number;
-    items_per_page: number;
-  };
+interface JobListContentProps {
+  refreshTrigger: number;
+  onFirstJobLoad: (jobName: string | null) => void;
 }
+
+const ITEMS_PER_PAGE = 20;
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
@@ -40,62 +38,56 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   );
 }
 
-interface JobListContentProps {
-  refreshTrigger: number;
-  onFirstJobLoad: (jobName: string | null) => void;
-}
-
 const JobListContent: React.FC<JobListContentProps> = ({ refreshTrigger, onFirstJobLoad }) => {
   const [jobs, setJobs] = useState<Job[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const params = useParams();
   const selectedJobName = params?.jobName as string;
   const toast = useToast();
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        setIsLoading(true);
-        const response: ApiResponse = await fetchWithAuth(
-          `/fine-tuning?page=${currentPage}`
-        );
-        const sortedJobs = response.data.sort((a, b) => 
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-        setJobs(sortedJobs);
-        setTotalPages(response.pagination.total_pages);
-
-        // If there's at least one job and no job is currently selected, select the first one
-        if (sortedJobs.length > 0 && !selectedJobName) {
-          onFirstJobLoad(sortedJobs[0].name);
-          router.push(`/fine-tuning/${sortedJobs[0].name}`);
-        } else if (sortedJobs.length === 0) {
-          onFirstJobLoad(null);
-        }
-      } catch (error) {
-        console.error("Error fetching jobs:", error);
-        toast({
-          title: "Error fetching jobs",
-          description: "Please try again later.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        onFirstJobLoad(null);
-      } finally {
-        setIsLoading(false);
+  const loadJobs = async (pageToLoad: number) => {
+    setIsLoading(true);
+    try {
+      const response = await fetchWithAuth(`/fine-tuning?page=${pageToLoad}&per_page=${ITEMS_PER_PAGE}`);
+      const newJobs = response.data;
+      if (pageToLoad === 1) {
+        setJobs(newJobs);
+      } else {
+        setJobs((prevJobs) => [...prevJobs, ...newJobs]);
       }
-    };
+      setHasMore(newJobs.length === ITEMS_PER_PAGE);
 
-    fetchJobs();
-  }, [currentPage, toast, refreshTrigger, selectedJobName, onFirstJobLoad, router]);
+      if (pageToLoad === 1 && newJobs.length > 0 && !selectedJobName) {
+        onFirstJobLoad(newJobs[0].name);
+        router.push(`/fine-tuning/${newJobs[0].name}`);
+      }
+    } catch (error) {
+      console.error("Error fetching jobs:", error);
+      toast({
+        title: "Error fetching jobs",
+        description: "Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-  if (isLoading) {
-    return <Spinner />;
-  }
+  useEffect(() => {
+    setPage(1);
+    loadJobs(1);
+  }, [refreshTrigger]);
+
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadJobs(nextPage);
+  };
 
   return (
     <VStack align="stretch" spacing={0} height="100%">
@@ -121,14 +113,23 @@ const JobListContent: React.FC<JobListContentProps> = ({ refreshTrigger, onFirst
           </Box>
         </Link>
       ))}
-      <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200" marginTop="auto">
-        <Text fontSize="sm" color="gray.600">
-          {totalPages === 0 ? 
-            `Page 0 of 0` :
-            `Page ${currentPage} of ${totalPages}`
-          }
-        </Text>
-      </Flex>
+      {isLoading && (
+        <Box p={4} textAlign="center">
+          <Spinner />
+        </Box>
+      )}
+      {!isLoading && hasMore && (
+        <Box p={4} textAlign="center">
+          <Button
+            onClick={handleLoadMore}
+            color="white"
+            bg="#4e00a6"
+            _hover={{ bg: "#0005A6" }}
+          >
+            Load More
+          </Button>
+        </Box>
+      )}
     </VStack>
   );
 };
