@@ -1,47 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Flex, Spacer, Link, Button, useBreakpointValue, Spinner } from '@chakra-ui/react';
+import React from 'react';
+import { Box, Flex, Spacer, Link, IconButton, Menu, MenuButton, MenuList, MenuItem, useToast } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
+import { Cog6ToothIcon } from '@heroicons/react/24/outline';
 
 const Header = () => {
-  const { isLoggedIn, userName, logout } = useAuth();
-  const isMobile = useBreakpointValue({ base: true, md: false });
-  const [apiBaseUrl, setApiBaseUrl] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
+  const { isLoggedIn, logout } = useAuth();
+  const toast = useToast();
 
-  useEffect(() => {
-    const fetchApiSettings = async () => {
-      try {
-        const response = await fetch('/api/settings');
-        if (!response.ok) {
-          throw new Error('Failed to fetch API settings');
-        }
-        const settings = await response.json();
-        setApiBaseUrl(settings.API_BASE_URL);
-      } catch (error) {
-        console.error('Failed to fetch API settings:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchApiSettings();
-  }, []);
-
-  const handleLogin = () => {
-    if (apiBaseUrl) {
-      window.location.href = `${apiBaseUrl}v1/auth0/login`;
-    } else {
-      console.error('API base URL is not available');
-    }
-  };
-
-  const handleLogout = () => {
-    if (apiBaseUrl) {
-      window.location.href = `${apiBaseUrl}v1/auth0/logout`;
-    } else {
-      console.error('API base URL is not available');
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('Logout failed:', error);
+      toast({
+        title: 'Logout failed',
+        description: 'An error occurred while logging out. Please try again.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
     }
   };
 
@@ -65,29 +44,30 @@ const Header = () => {
           <Link as={NextLink} href="https://docs.luminolabs.ai" target="_blank" color="gray.600">
             Docs
           </Link>
-          {isLoading ? (
-            <Spinner size="sm" color="#4e00a6" />
-          ) : isLoggedIn ? (
-            <Button
-              color="white"
-              bg="#4e00a6"
-              _hover={{ bg: "#0005A6" }}
-              width={isMobile ? "100%" : "auto"}
-              onClick={handleLogout}
-            >
-              Logout
-            </Button>
+          {isLoggedIn ? (
+            <Menu>
+              <MenuButton
+                as={IconButton}
+                icon={<Cog6ToothIcon style={{ width: '24px', height: '24px' }} />}
+                color="black"
+                _hover={{ color: "#0005A6" }}
+                aria-label="Settings"
+              />
+              <MenuList bg="white">
+                <NextLink href="/settings" passHref>
+                  <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Settings</MenuItem>
+                </NextLink>
+                <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} onClick={handleLogout}>Logout</MenuItem>
+              </MenuList>
+            </Menu>
           ) : (
-            <Button
+            <IconButton
+              icon={<Cog6ToothIcon style={{ width: '24px', height: '24px' }} />}
               color="white"
-              bg="#4e00a6"
-              _hover={{ bg: "#0005A6" }}
-              width={isMobile ? "100%" : "auto"}
-              onClick={handleLogin}
-              isDisabled={!apiBaseUrl}
-            >
-              Login
-            </Button>
+              _hover={{ bg: '#D6C6F6', color: '#4E00A6' }}
+              onClick={() => window.location.reload()}
+              aria-label="Login"
+            />
           )}
         </Flex>
       </Flex>

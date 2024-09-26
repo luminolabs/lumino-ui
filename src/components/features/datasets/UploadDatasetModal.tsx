@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import {
   Modal,
   ModalOverlay,
@@ -15,8 +15,11 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
+  Box,
+  Flex,
 } from "@chakra-ui/react";
 import { fetchWithAuth } from "@/utils/api";
+import { AttachmentIcon } from "@chakra-ui/icons";
 
 interface UploadDatasetModalProps {
   isOpen: boolean;
@@ -35,6 +38,7 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
   const [isUploading, setIsUploading] = useState(false);
   const [nameError, setNameError] = useState("");
   const toast = useToast();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -104,19 +108,34 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
     }
   };
 
+  const inputStyle = {
+    color: "black",
+    borderColor: "gray.300",
+    _hover: { borderColor: "#4e00a6" },
+    _focus: { borderColor: "#4e00a6", boxShadow: "0 0 0 1px #4e00a6" },
+  };
+
+  const labelStyle = {
+    color: "#4e00a6",
+    fontWeight: "700",
+  };
+
+  const handleFileButtonClick = () => {
+    fileInputRef.current?.click();
+  };
+
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="xl">
       <ModalOverlay />
       <ModalContent style={{ background: 'white', boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)', borderRadius: 10 }}>
         <ModalHeader color="#261641">Upload Dataset</ModalHeader>
-        <ModalCloseButton color="#261641" />
-        <ModalBody color="#4e00a6">
+        <ModalCloseButton />
+        <ModalBody>
           <VStack spacing={4} align="stretch">
             <FormControl isInvalid={!!nameError} isRequired>
-              <FormLabel>Dataset Name</FormLabel>
+              <FormLabel {...labelStyle}>Dataset Name</FormLabel>
               <Input
-                color="black"
-                borderColor="#4e00a6"
+                {...inputStyle}
                 value={datasetName}
                 onChange={(e) => setDatasetName(e.target.value)}
                 placeholder="Enter dataset name"
@@ -125,10 +144,9 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
               <FormErrorMessage>{nameError}</FormErrorMessage>
             </FormControl>
             <FormControl>
-              <FormLabel>Description (Optional)</FormLabel>
+              <FormLabel {...labelStyle}>Description (Optional)</FormLabel>
               <Input
-                color="black"
-                borderColor="#4e00a6"
+                {...inputStyle}
                 value={datasetDescription}
                 onChange={(e) => setDatasetDescription(e.target.value)}
                 placeholder="Enter dataset description"
@@ -136,20 +154,48 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
               />
             </FormControl>
             <FormControl isRequired>
-              <FormLabel>Upload File</FormLabel>
+              <FormLabel {...labelStyle}>Upload File</FormLabel>
               <Input
-                color="black"
-                borderColor="#4e00a6"
                 type="file"
                 accept=".jsonl,.json,.csv,.txt"
                 onChange={handleFileChange}
+                display="none"
+                ref={fileInputRef}
               />
+              <Flex
+                color="white"
+                bg="#4e00a6"
+                borderRadius="50px"
+                _hover={{ bg: "#0005A6" }}>
+                <Button
+                  onClick={handleFileButtonClick}
+                  leftIcon={<AttachmentIcon />}
+                  flex="1"
+                  borderRadius=""
+                >
+                  {file ? file.name : "Choose file"}
+                </Button>
+                {file && (
+                  <Button
+                    alignItems="center"
+                    alignSelf="center"
+                    onClick={() => setFile(null)}
+                    color="white"
+                    bg="#4e00a6"
+                    borderRadius="50px"
+                    _hover={{ bg: "#0005A6" }}
+                    size="sm"
+                  >
+                    x
+                  </Button>
+                )}
+              </Flex>
+              {file && (
+                <Text fontSize="sm" color="gray.600" mt={1}>
+                  Selected file: {file.name}
+                </Text>
+              )}
             </FormControl>
-            {file && (
-              <Text fontSize="sm" color="gray.600">
-                Selected file: {file.name}
-              </Text>
-            )}
           </VStack>
         </ModalBody>
         <ModalFooter>

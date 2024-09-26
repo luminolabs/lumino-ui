@@ -1,4 +1,5 @@
 export const fonts = {
-    body: 'Inter, sans-serif',
-    heading: 'Inter, sans-serif',
+    body: '"DM Sans", sans-serif',
+    heading: '"DM Sans", sans-serif',
+    mono: 'Menlo, monospace',
 }

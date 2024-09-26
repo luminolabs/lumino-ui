@@ -13,7 +13,7 @@
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'DM Sans', sans-serif;
   margin: 0;
   padding: 0;
 }
@@ -27,6 +27,12 @@ body {
 }
 
 .lumino-purple-border {
+  border-color: #F2F2F2;
+}
+.lumino-purple-border:hover {
+  border-color: #4e00a6;
+}
+.lumino-purple-border:active {
   border-color: #4e00a6;
 }
 

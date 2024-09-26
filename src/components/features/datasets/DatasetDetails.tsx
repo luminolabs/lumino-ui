@@ -1,8 +1,11 @@
-'use client'
-
-import { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, Grid, GridItem, useBreakpointValue } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon } from '@chakra-ui/react';
 import { fetchWithAuth } from '@/utils/api';
+import { 
+  IdentificationIcon, CheckCircleIcon, DocumentTextIcon, CalendarIcon, 
+  ClockIcon, InformationCircleIcon, DocumentIcon, ArrowsUpDownIcon,
+  ExclamationCircleIcon
+} from '@heroicons/react/24/outline';
 
 interface DatasetDetails {
   id: string;
@@ -20,7 +23,6 @@ const DatasetDetails = ({ datasetName }: { datasetName: string }) => {
   const [datasetDetails, setDatasetDetails] = useState<DatasetDetails | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const toast = useToast();
-  const columns = useBreakpointValue({ base: 1, md: 2 });
 
   useEffect(() => {
     const fetchDatasetDetails = async () => {
@@ -54,26 +56,48 @@ const DatasetDetails = ({ datasetName }: { datasetName: string }) => {
     return <Text>Dataset not found</Text>;
   }
 
-  const DetailItem = ({ label, value }: { label: string; value: string | number }) => (
-    <GridItem>
-      <Text fontWeight="semibold" color="gray.600">{label}</Text>
-      <Text color="gray.900">{value}</Text>
-    </GridItem>
+  const DetailItem = ({ icon, label, value, color = "gray.600" }: { icon: React.ElementType; label: string; value: string | number; color?: string }) => (
+    <Flex align="center" py={2}>
+      <Icon as={icon} boxSize={5} color={color} mr={3} />
+      <Box>
+        <Text fontSize="xs" fontWeight="medium" color="gray.500">{label}</Text>
+        <Text fontSize="sm" fontWeight="semibold" color={color}>{value}</Text>
+      </Box>
+    </Flex>
   );
 
+  const getStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'uploaded': return 'green.500';
+      case 'processing': return 'blue.500';
+      case 'error': return 'red.500';
+      default: return 'gray.500';
+    }
+  };
+
+  const formatFileSize = (bytes: number) => {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  };
+
   return (
-    <Box>
-      <Grid templateColumns={`repeat(${columns}, 1fr)`} gap={6}>
-        <DetailItem label="Id" value={datasetDetails.id} />
-        <DetailItem label="Status" value={datasetDetails.status} />
-        <DetailItem label="Name" value={datasetDetails.name} />
-        <DetailItem label="Created At" value={new Date(datasetDetails.created_at).toLocaleString()} />
-        <DetailItem label="Last Updated" value={new Date(datasetDetails.updated_at).toLocaleString()} />
-        <DetailItem label="Description" value={datasetDetails.description} />
-        <DetailItem label="File Name" value={datasetDetails.file_name} />
-        <DetailItem label="File Size" value={datasetDetails.file_size} />
-        <DetailItem label="Errors" value={datasetDetails.errors} />
-      </Grid>
+    <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
+      <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+        <DetailItem icon={IdentificationIcon} label="Id" value={datasetDetails.id} />
+        <DetailItem icon={CheckCircleIcon} label="Status" value={datasetDetails.status} color={getStatusColor(datasetDetails.status)} />
+        <DetailItem icon={DocumentTextIcon} label="Name" value={datasetDetails.name} />
+        <DetailItem icon={CalendarIcon} label="Created At" value={new Date(datasetDetails.created_at).toLocaleString()} />
+        <DetailItem icon={ClockIcon} label="Last Updated" value={new Date(datasetDetails.updated_at).toLocaleString()} />
+        <DetailItem icon={InformationCircleIcon} label="Description" value={datasetDetails.description || 'No description'} />
+        <DetailItem icon={DocumentIcon} label="File Name" value={datasetDetails.file_name} />
+        <DetailItem icon={ArrowsUpDownIcon} label="File Size" value={formatFileSize(datasetDetails.file_size)} />
+        {datasetDetails.errors && (
+          <DetailItem icon={ExclamationCircleIcon} label="Errors" value={datasetDetails.errors} color="red.500" />
+        )}
+      </SimpleGrid>
     </Box>
   );
 };
