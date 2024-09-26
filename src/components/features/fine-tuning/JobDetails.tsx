@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button } from '@chakra-ui/react';
-import { DownloadIcon } from '@chakra-ui/icons';
+import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
 import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, IdentificationIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 
@@ -26,10 +26,17 @@ interface JobDetail {
   total_steps: number;
 }
 
+interface Artifacts {
+  base_url: string;
+  weight_files: string[];
+  other_files: string[];
+}
+
 const JobDetails = ({ jobName }: { jobName: string }) => {
   const [jobDetails, setJobDetails] = useState<JobDetail | null>(null);
+  const [artifacts, setArtifacts] = useState<Artifacts | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isArtifactsLoading, setIsArtifactsLoading] = useState(true);
   const toast = useToast();
 
   useEffect(() => {
@@ -53,45 +60,35 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
       }
     };
 
-    fetchJobDetails();
-  }, [jobName, toast]);
-
-  const handleDownloadWeights = async () => {
-    setIsDownloading(true);
-    try {
-      const data = await fetchWithAuth(`/models/fine-tuned/${jobName}`);
-      if (data.artifacts && data.artifacts.base_url) {
-        window.open(data.artifacts.base_url, '_blank');
-      } else {
+    const fetchArtifacts = async () => {
+      if (!jobName) return;
+      try {
+        setIsArtifactsLoading(true);
+        const data = await fetchWithAuth(`/models/fine-tuned/${jobName}`);
+        console.log("my data : ", data);
+        
+        setArtifacts(data.artifacts);
+      } catch (error) {
+        console.error('Error fetching artifacts:', error);
         toast({
-          title: "Download failed",
-          description: "Could not find download URL for weights",
-          status: "error",
+          title: 'Error fetching artifacts',
+          description: 'Unable to load downloadable files.',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
+      } finally {
+        setIsArtifactsLoading(false);
       }
-    } catch (error) {
-      console.error('Error downloading weights:', error);
-      toast({
-        title: "Download failed",
-        description: "An error occurred while trying to download weights",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsDownloading(false);
-    }
+    };
+
+    fetchJobDetails();
+    fetchArtifacts();
+  }, [jobName, toast]);
+
+  const handleDownload = (url: string) => {
+    window.open(url, '_blank');
   };
-
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (!jobDetails) {
-    return <Text>Job not found</Text>;
-  }
 
   const DetailItem = ({ icon, label, value, color = "gray.600" }: { icon: React.ElementType; label: string; value: string | number; color?: string }) => (
     <Flex align="center" py={2}>
@@ -113,7 +110,15 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     }
   };
 
-  const isDownloadable = jobDetails.status.toLowerCase() === 'completed' || jobDetails.status.toLowerCase() === 'failed';
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!jobDetails) {
+    return <Text>Job not found</Text>;
+  }
+
+  const isDownloadable = true// jobDetails.status.toLowerCase() === 'completed';
 
   return (
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
@@ -135,20 +140,28 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
         <DetailItem icon={ArrowPathRoundedSquareIcon} label="Total Epochs" value={jobDetails.total_epochs || 'N/A'} />
         <DetailItem icon={ForwardIcon} label="Total Steps" value={jobDetails.total_steps || 'N/A'} />
       </SimpleGrid>
-      <Flex justifyContent="flex-start" mt={4}>
-        <Button
-          leftIcon={<DownloadIcon />}
-          color="white"
-          bg="#4e00a6"
-          _hover={{ bg: "#0005A6" }}
-          onClick={handleDownloadWeights}
-          isLoading={isDownloading}
-          loadingText="Downloading..."
-          isDisabled={!isDownloadable}
-        >
-          Download Weights
-        </Button>
-      </Flex>
+      {isDownloadable && artifacts && !isArtifactsLoading && (
+        <Flex justifyContent="flex-start" mt={4}>
+          <Menu>
+            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} color="white" bg="#4e00a6" _hover={{ bg: "#0005A6" }}>
+              Download Files
+            </MenuButton>
+            <MenuList>
+              {artifacts.weight_files.map((file) => (
+                <MenuItem key={file} onClick={() => handleDownload(`${artifacts.base_url}/${file}`)}>
+                  {file}
+                </MenuItem>
+              ))}
+              {artifacts.other_files.map((file) => (
+                <MenuItem key={file} onClick={() => handleDownload(`${artifacts.base_url}/${file}`)}>
+                  {file}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </Menu>
+        </Flex>
+      )}
+      {isArtifactsLoading && <Spinner mt={4} />}
     </Box>
   );
 };

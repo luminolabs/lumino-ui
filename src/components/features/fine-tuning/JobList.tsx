@@ -90,7 +90,7 @@ const JobListContent: React.FC<JobListContentProps> = ({ refreshTrigger, onFirst
   };
 
   return (
-    <VStack align="stretch" spacing={0} height="100%">
+    <VStack align="stretch" spacing={0} height="700px">
       {jobs.map((job) => (
         <Link key={job.id} href={`/fine-tuning/${job.name}`} passHref>
           <Box

@@ -87,7 +87,7 @@ const DatasetListContent: React.FC<DatasetListContentProps> = ({
   };
 
   return (
-    <Box height="400px" overflowY="auto">
+    <Box height="900px" overflowY="auto">
       <VStack spacing={0} align="stretch">
         {datasets.map((dataset) => (
           <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
