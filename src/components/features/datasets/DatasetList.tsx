@@ -1,13 +1,5 @@
-import { useState, useEffect } from "react";
-import {
-  VStack,
-  Box,
-  Text,
-  Spinner,
-  useToast,
-  Flex,
-  Button,
-} from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import { Box, Text, Spinner, useToast, VStack, Button } from "@chakra-ui/react";
 import Link from "next/link";
 import { fetchWithAuth } from "@/utils/api";
 import { useParams, useRouter } from "next/navigation";
@@ -19,14 +11,12 @@ interface Dataset {
   name: string;
 }
 
-interface ApiResponse {
-  data: Dataset[];
-  pagination: {
-    total_pages: number;
-    current_page: number;
-    items_per_page: number;
-  };
+interface DatasetListContentProps {
+  refreshTrigger: number;
+  onFirstDatasetLoad: (datasetName: string | null) => void;
 }
+
+const ITEMS_PER_PAGE = 20;
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
@@ -40,96 +30,98 @@ function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   );
 }
 
-interface DatasetListContentProps {
-  refreshTrigger: number;
-  onFirstDatasetLoad: (datasetName: string | null) => void;
-}
-
-const DatasetListContent: React.FC<DatasetListContentProps> = ({ refreshTrigger, onFirstDatasetLoad }) => {
+const DatasetListContent: React.FC<DatasetListContentProps> = ({
+  refreshTrigger,
+  onFirstDatasetLoad,
+}) => {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
   const params = useParams();
+  const router = useRouter();
   const selectedDatasetName = params?.datasetName as string;
   const toast = useToast();
-  const router = useRouter();
+
+  const loadDatasets = async (pageToLoad: number) => {
+    setIsLoading(true);
+    try {
+      const response = await fetchWithAuth(
+        `/datasets?page=${pageToLoad}&per_page=${ITEMS_PER_PAGE}`
+      );
+      const newDatasets = response.data;
+      if (pageToLoad === 1) {
+        setDatasets(newDatasets);
+      } else {
+        setDatasets((prevDatasets) => [...prevDatasets, ...newDatasets]);
+      }
+      setHasMore(newDatasets.length === ITEMS_PER_PAGE);
+
+      if (pageToLoad === 1 && newDatasets.length > 0 && !selectedDatasetName) {
+        onFirstDatasetLoad(newDatasets[0].name);
+        router.push(`/datasets/${newDatasets[0].name}`);
+      }
+    } catch (error) {
+      console.error("Error fetching datasets:", error);
+      toast({
+        title: "Error fetching datasets",
+        description: "Please try again later.",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDatasets = async () => {
-      try {
-        setIsLoading(true);
-        const response: ApiResponse = await fetchWithAuth(
-          `/datasets?page=${currentPage}`
-        );
-        const sortedDatasets = response.data.sort((a, b) =>
-          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-        );
-        setDatasets(sortedDatasets);
-        setTotalPages(response.pagination.total_pages);
+    setPage(1);
+    loadDatasets(1);
+  }, [refreshTrigger]);
 
-        // If there's at least one dataset and no dataset is currently selected, select the first one
-        if (sortedDatasets.length > 0 && !selectedDatasetName) {
-          onFirstDatasetLoad(sortedDatasets[0].name);
-          router.push(`/datasets/${sortedDatasets[0].name}`);
-        } else if (sortedDatasets.length === 0) {
-          onFirstDatasetLoad(null);
-        }
-      } catch (error) {
-        console.error("Error fetching datasets:", error);
-        toast({
-          title: "Error fetching datasets",
-          description: "Please try again later.",
-          status: "error",
-          duration: 5000,
-          isClosable: true,
-        });
-        onFirstDatasetLoad(null);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchDatasets();
-  }, [currentPage, toast, refreshTrigger, selectedDatasetName, onFirstDatasetLoad, router]);
-
-  if (isLoading) {
-    return <Spinner />;
-  }
+  const handleLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+    loadDatasets(nextPage);
+  };
 
   return (
-    <VStack align="stretch" spacing={0} height="100%">
-      {datasets.map((dataset) => (
-        <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
-          <Box
-            p={4}
-            bg={selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"}
-            borderLeft={
-              selectedDatasetName === dataset.name ? "4px solid #7C3AED" : "none"
-            }
-            cursor="pointer"
-            _hover={{ bg: "#F3E8FF" }}
-          >
-            <Flex justify="space-between" alignItems="center">
-              <Text fontWeight="medium" color="#261641">
-                {dataset.name}
-              </Text>
-              <Text fontSize="sm" color="gray.500" ml={4}>
-                {new Date(dataset.created_at).toLocaleString()}
-              </Text>
-            </Flex>
+    <Box height="400px" overflowY="auto">
+      <VStack spacing={0} align="stretch">
+        {datasets.map((dataset) => (
+          <Link key={dataset.id} href={`/datasets/${dataset.name}`} passHref>
+            <Box
+              p={4}
+              bg={selectedDatasetName === dataset.name ? "#F3E8FF" : "transparent"}
+              borderLeft={selectedDatasetName === dataset.name ? "4px solid #7C3AED" : "none"}
+              cursor="pointer"
+              _hover={{ bg: "#F3E8FF" }}
+            >
+              <Text fontWeight="medium" color="#261641">{dataset.name}</Text>
+              <Text fontSize="sm" color="gray.500">{new Date(dataset.created_at).toLocaleString()}</Text>
+            </Box>
+          </Link>
+        ))}
+        {isLoading && (
+          <Box p={4} textAlign="center">
+            <Spinner />
           </Box>
-        </Link>
-      ))}
-      <Flex justify="center" p={4} borderTop="1px" borderColor="gray.200" marginTop="auto">
-        <Text fontSize="sm" color="gray.600">
-          {totalPages === 0 ?
-            `Page 0 of 0` :
-            `Page ${currentPage} of ${totalPages}`
-          }
-        </Text>
-      </Flex>
-    </VStack>
+        )}
+        {!isLoading && hasMore && (
+          <Box p={4} textAlign="center">
+            <Button
+              onClick={handleLoadMore}
+              color="white"
+              bg="#4e00a6"
+              _hover={{ bg: "#0005A6" }}
+            >
+              Load More
+            </Button>
+          </Box>
+        )}
+      </VStack>
+    </Box>
   );
 };
 
@@ -138,10 +130,16 @@ interface DatasetListProps {
   onFirstDatasetLoad: (datasetName: string | null) => void;
 }
 
-const DatasetList: React.FC<DatasetListProps> = ({ refreshTrigger, onFirstDatasetLoad }) => {
+const DatasetList: React.FC<DatasetListProps> = ({
+  refreshTrigger,
+  onFirstDatasetLoad,
+}) => {
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <DatasetListContent refreshTrigger={refreshTrigger} onFirstDatasetLoad={onFirstDatasetLoad} />
+      <DatasetListContent
+        refreshTrigger={refreshTrigger}
+        onFirstDatasetLoad={onFirstDatasetLoad}
+      />
     </ErrorBoundary>
   );
 };
