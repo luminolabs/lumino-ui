@@ -1,7 +1,6 @@
-'use client'
-
-import { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, Grid, GridItem, useBreakpointValue, HStack, Icon, VStack, Flex, SimpleGrid } from '@chakra-ui/react';
+import React, { useState, useEffect } from 'react';
+import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button } from '@chakra-ui/react';
+import { DownloadIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
 import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, IdentificationIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 
@@ -24,12 +23,13 @@ interface JobDetail {
   }
   status: string;
   total_epochs: number;
-  total_steps:number;
+  total_steps: number;
 }
 
 const JobDetails = ({ jobName }: { jobName: string }) => {
   const [jobDetails, setJobDetails] = useState<JobDetail | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isDownloading, setIsDownloading] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -55,6 +55,35 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
 
     fetchJobDetails();
   }, [jobName, toast]);
+
+  const handleDownloadWeights = async () => {
+    setIsDownloading(true);
+    try {
+      const data = await fetchWithAuth(`/models/fine-tuned/${jobName}`);
+      if (data.artifacts && data.artifacts.base_url) {
+        window.open(data.artifacts.base_url, '_blank');
+      } else {
+        toast({
+          title: "Download failed",
+          description: "Could not find download URL for weights",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+    } catch (error) {
+      console.error('Error downloading weights:', error);
+      toast({
+        title: "Download failed",
+        description: "An error occurred while trying to download weights",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+      });
+    } finally {
+      setIsDownloading(false);
+    }
+  };
 
   if (isLoading) {
     return <Spinner />;
@@ -84,6 +113,8 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     }
   };
 
+  const isDownloadable = jobDetails.status.toLowerCase() === 'completed' || jobDetails.status.toLowerCase() === 'failed';
+
   return (
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
       <SimpleGrid columns={[1, 2, 3]} spacing={4}>
@@ -104,6 +135,20 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
         <DetailItem icon={ArrowPathRoundedSquareIcon} label="Total Epochs" value={jobDetails.total_epochs || 'N/A'} />
         <DetailItem icon={ForwardIcon} label="Total Steps" value={jobDetails.total_steps || 'N/A'} />
       </SimpleGrid>
+      <Flex justifyContent="flex-start" mt={4}>
+        <Button
+          leftIcon={<DownloadIcon />}
+          color="white"
+          bg="#4e00a6"
+          _hover={{ bg: "#0005A6" }}
+          onClick={handleDownloadWeights}
+          isLoading={isDownloading}
+          loadingText="Downloading..."
+          isDisabled={!isDownloadable}
+        >
+          Download Weights
+        </Button>
+      </Flex>
     </Box>
   );
 };
