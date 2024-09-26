@@ -1,6 +1,6 @@
 FROM node:22-bullseye
 
-WORKDIR /app
+WORKDIR /project
 
 # Copy code
 COPY . .
