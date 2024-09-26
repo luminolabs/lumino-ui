@@ -1,57 +1,25 @@
-'use client'
+import { Metadata } from 'next'
+import LayoutClient from './layout-client'
+import { dmSans } from '@/styles/fonts'
 
-import { ChakraProvider, Flex, Box, Spinner, Center } from "@chakra-ui/react";
-import { ErrorBoundary } from "react-error-boundary";
-import { Suspense } from "react";
-import theme from "../theme";
-import ErrorFallback from "@/components/ErrorFallback";
-import Sidebar from "@/components/layout/Sidebar";
-import Header from "@/components/layout/Header";
-import { AuthProvider, useAuth } from '@/context/AuthContext';
-import { dmSans } from '@/styles/fonts';
-
-const AppContent = ({ children }: { children: React.ReactNode }) => {
-  const { isLoading } = useAuth();
-
-  if (isLoading) {
-    return (
-      <Center height="100vh">
-        <Spinner size="xl" color="purple.500" />
-      </Center>
-    );
-  }
-
-  return (
-    <Flex flexDirection="column" minHeight="100vh">
-      <Header />
-      <Flex flex={1}>
-        <Sidebar />
-        <Box as="main" flex={1} overflowX="hidden" overflowY="auto" bg="gray.50">
-          {children}
-        </Box>
-      </Flex>
-    </Flex>
-  );
-};
-
+export const metadata: Metadata = {
+  title: 'LuminoDashboard',
+  description: 'Dashboard for Lumino AI services',
+  icons: [
+    { rel: 'icon', url: '/favicon.ico' },
+    { rel: 'icon', url: '/icon.svg', type: 'image/svg+xml' },
+  ],
+}
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
   return (
     <html lang="en" className={dmSans.className}>
       <body>
-        <ErrorBoundary FallbackComponent={ErrorFallback}>
-          <AuthProvider>
-            <Suspense fallback={<div>Loading...</div>}>
-              <ChakraProvider theme={theme}>
-                <AppContent>{children}</AppContent>
-              </ChakraProvider>
-            </Suspense>
-          </AuthProvider>
-        </ErrorBoundary>
+        <LayoutClient>{children}</LayoutClient>
       </body>
     </html>
-  );
+  )
 }
