@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button } from '@chakra-ui/react';
+import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack } from '@chakra-ui/react';
 import { DownloadIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
 import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, IdentificationIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
@@ -26,10 +26,17 @@ interface JobDetail {
   total_steps: number;
 }
 
+interface Artifacts {
+  base_url: string;
+  weight_files: string[];
+  other_files: string[];
+}
+
 const JobDetails = ({ jobName }: { jobName: string }) => {
   const [jobDetails, setJobDetails] = useState<JobDetail | null>(null);
+  const [artifacts, setArtifacts] = useState<Artifacts | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isDownloading, setIsDownloading] = useState(false);
+  const [isArtifactsLoading, setIsArtifactsLoading] = useState(true);
   const toast = useToast();
 
   useEffect(() => {
@@ -53,45 +60,33 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
       }
     };
 
-    fetchJobDetails();
-  }, [jobName, toast]);
-
-  const handleDownloadWeights = async () => {
-    setIsDownloading(true);
-    try {
-      const data = await fetchWithAuth(`/models/fine-tuned/${jobName}`);
-      if (data.artifacts && data.artifacts.base_url) {
-        window.open(data.artifacts.base_url, '_blank');
-      } else {
+    const fetchArtifacts = async () => {
+      if (!jobName) return;
+      try {
+        setIsArtifactsLoading(true);
+        const data = await fetchWithAuth(`/models/fine-tuned/${jobName}`);
+        setArtifacts(data.artifacts);
+      } catch (error) {
+        console.error('Error fetching artifacts:', error);
         toast({
-          title: "Download failed",
-          description: "Could not find download URL for weights",
-          status: "error",
+          title: 'Error fetching artifacts',
+          description: 'Unable to load downloadable files.',
+          status: 'error',
           duration: 5000,
           isClosable: true,
         });
+      } finally {
+        setIsArtifactsLoading(false);
       }
-    } catch (error) {
-      console.error('Error downloading weights:', error);
-      toast({
-        title: "Download failed",
-        description: "An error occurred while trying to download weights",
-        status: "error",
-        duration: 5000,
-        isClosable: true,
-      });
-    } finally {
-      setIsDownloading(false);
-    }
+    };
+
+    fetchJobDetails();
+    fetchArtifacts();
+  }, [jobName, toast]);
+
+  const handleDownload = (url: string) => {
+    window.open(url, '_blank');
   };
-
-  if (isLoading) {
-    return <Spinner />;
-  }
-
-  if (!jobDetails) {
-    return <Text>Job not found</Text>;
-  }
 
   const DetailItem = ({ icon, label, value, color = "gray.600" }: { icon: React.ElementType; label: string; value: string | number; color?: string }) => (
     <Flex align="center" py={2}>
@@ -113,7 +108,59 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     }
   };
 
-  const isDownloadable = jobDetails.status.toLowerCase() === 'completed' || jobDetails.status.toLowerCase() === 'failed';
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  if (!jobDetails) {
+    return <Text>Job not found</Text>;
+  }
+
+  const isDownloadable = jobDetails.status.toLowerCase() === 'completed';
+
+  const renderDownloadButtons = () => {
+    if (isArtifactsLoading) {
+      return <Spinner />;
+    }
+
+    if (!artifacts || (!artifacts.weight_files.length && !artifacts.other_files.length)) {
+      return (
+        <Button
+          leftIcon={<DownloadIcon />}
+          color="white"
+          bg="#4e00a6"
+          _hover={{ bg: "#0005A6" }}
+          isDisabled={true}
+          width="100%"
+        >
+          Download
+        </Button>
+      );
+    }
+
+    const allFiles = [...artifacts.weight_files, ...artifacts.other_files];
+
+    return (
+      <SimpleGrid columns={3} spacing={2}>
+        {allFiles.map((file) => (
+          <Button
+            key={file}
+            leftIcon={<DownloadIcon />}
+            color="white"
+            bg="#4e00a6"
+            _hover={{ bg: "#0005A6" }}
+            onClick={() => handleDownload(`${artifacts!.base_url}/${file}`)}
+            size="sm"
+            height="auto"
+            whiteSpace="normal"
+            py={2}
+          >
+            {file}
+          </Button>
+        ))}
+      </SimpleGrid>
+    );
+  };
 
   return (
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
@@ -135,20 +182,24 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
         <DetailItem icon={ArrowPathRoundedSquareIcon} label="Total Epochs" value={jobDetails.total_epochs || 'N/A'} />
         <DetailItem icon={ForwardIcon} label="Total Steps" value={jobDetails.total_steps || 'N/A'} />
       </SimpleGrid>
-      <Flex justifyContent="flex-start" mt={4}>
+      {isDownloadable ? (
+        <Box mt={4}>
+          <Text fontWeight="bold" mb={2}>Downloads</Text>
+          {renderDownloadButtons()}
+        </Box>
+      ) : <Box mt={4}>
+        <Text fontWeight="bold" mb={2}>Downloads</Text>
         <Button
           leftIcon={<DownloadIcon />}
           color="white"
           bg="#4e00a6"
           _hover={{ bg: "#0005A6" }}
-          onClick={handleDownloadWeights}
-          isLoading={isDownloading}
-          loadingText="Downloading..."
-          isDisabled={!isDownloadable}
+          isDisabled={true}
+          width="20%"
         >
-          Download Weights
+          Download
         </Button>
-      </Flex>
+      </Box>}
     </Box>
   );
 };
