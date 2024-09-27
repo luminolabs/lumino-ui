@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, Menu, MenuButton, MenuList, MenuItem } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
+import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack } from '@chakra-ui/react';
+import { DownloadIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
 import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, IdentificationIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 
@@ -65,8 +65,6 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
       try {
         setIsArtifactsLoading(true);
         const data = await fetchWithAuth(`/models/fine-tuned/${jobName}`);
-        console.log("my data : ", data);
-        
         setArtifacts(data.artifacts);
       } catch (error) {
         console.error('Error fetching artifacts:', error);
@@ -118,7 +116,51 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     return <Text>Job not found</Text>;
   }
 
-  const isDownloadable = true// jobDetails.status.toLowerCase() === 'completed';
+  const isDownloadable = true // jobDetails.status.toLowerCase() === 'completed';
+
+  const renderDownloadButtons = () => {
+    if (isArtifactsLoading) {
+      return <Spinner />;
+    }
+
+    if (!artifacts || (!artifacts.weight_files.length && !artifacts.other_files.length)) {
+      return (
+        <Button
+          leftIcon={<DownloadIcon />}
+          color="white"
+          bg="#4e00a6"
+          _hover={{ bg: "#0005A6" }}
+          isDisabled={true}
+          width="100%"
+        >
+          Download
+        </Button>
+      );
+    }
+
+    const allFiles = [...artifacts.weight_files, ...artifacts.other_files];
+
+    return (
+      <SimpleGrid columns={3} spacing={2}>
+        {allFiles.map((file) => (
+          <Button
+            key={file}
+            leftIcon={<DownloadIcon />}
+            color="white"
+            bg="#4e00a6"
+            _hover={{ bg: "#0005A6" }}
+            onClick={() => handleDownload(`${artifacts!.base_url}/${file}`)}
+            size="sm"
+            height="auto"
+            whiteSpace="normal"
+            py={2}
+          >
+            {file}
+          </Button>
+        ))}
+      </SimpleGrid>
+    );
+  };
 
   return (
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
@@ -140,28 +182,24 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
         <DetailItem icon={ArrowPathRoundedSquareIcon} label="Total Epochs" value={jobDetails.total_epochs || 'N/A'} />
         <DetailItem icon={ForwardIcon} label="Total Steps" value={jobDetails.total_steps || 'N/A'} />
       </SimpleGrid>
-      {isDownloadable && artifacts && !isArtifactsLoading && (
-        <Flex justifyContent="flex-start" mt={4}>
-          <Menu>
-            <MenuButton as={Button} rightIcon={<ChevronDownIcon />} color="white" bg="#4e00a6" _hover={{ bg: "#0005A6" }}>
-              Download Files
-            </MenuButton>
-            <MenuList>
-              {artifacts.weight_files.map((file) => (
-                <MenuItem key={file} onClick={() => handleDownload(`${artifacts.base_url}/${file}`)}>
-                  {file}
-                </MenuItem>
-              ))}
-              {artifacts.other_files.map((file) => (
-                <MenuItem key={file} onClick={() => handleDownload(`${artifacts.base_url}/${file}`)}>
-                  {file}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </Menu>
-        </Flex>
-      )}
-      {isArtifactsLoading && <Spinner mt={4} />}
+      {isDownloadable ? (
+        <Box mt={4}>
+          <Text fontWeight="bold" mb={2}>Downloads</Text>
+          {renderDownloadButtons()}
+        </Box>
+      ) : <Box mt={4}>
+        <Text fontWeight="bold" mb={2}>Downloads</Text>
+        <Button
+          leftIcon={<DownloadIcon />}
+          color="white"
+          bg="#4e00a6"
+          _hover={{ bg: "#0005A6" }}
+          isDisabled={true}
+          width="20%"
+        >
+          Download
+        </Button>
+      </Box>}
     </Box>
   );
 };
