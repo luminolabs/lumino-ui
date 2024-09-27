@@ -1,31 +1,62 @@
+// src/app/usage/page.tsx
 'use client'
 
-import React, { useState } from 'react';
-import { Box, Heading, Flex, Button, HStack } from '@chakra-ui/react';
-import { FiDollarSign } from 'react-icons/fi';
+import React, { useState, useEffect } from 'react';
+import { Box, Heading, Flex, HStack, VStack } from '@chakra-ui/react';
 import UsageTable from '@/components/features/usage/UsageTable';
-import CustomDateRangePicker from '@/components/features/usage/CustomDateRangePicker';
+import SimpleDateRangePicker from '@/components/features/usage/SimpleDateRangePicker';
 import CustomTabs from '@/components/features/usage/CustomTabs';
-
-interface DateRange {
-  startDate: Date;
-  endDate: Date;
-}
+import { fetchWithAuth } from '@/utils/api';
 
 export default function Usage() {
-  const [dateRange, setDateRange] = useState<DateRange>({
-    startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+  const [dateRange, setDateRange] = useState<{ startDate: Date; endDate: Date }>({
+    startDate: new Date(new Date().setDate(new Date().getDate() - 30)),
     endDate: new Date()
   });
   const [activeTab, setActiveTab] = useState<'cost' | 'activity'>('cost');
+  const [usageData, setUsageData] = useState<any[]>([]);
+
+  const fetchUsageData = async () => {
+    const endpoint = activeTab === 'cost' ? '/usage/total-cost' : '/usage/records';
+    const params = new URLSearchParams({
+      start_date: dateRange.startDate.toISOString().split('T')[0],
+      end_date: dateRange.endDate.toISOString().split('T')[0],
+    });
+
+    try {
+      const response = await fetchWithAuth(`${endpoint}?${params}`);
+      if (activeTab === 'cost') {
+        setUsageData([{ date: response.end_date, value: parseFloat(response.total_cost) }]);
+      } else {
+        setUsageData(response.data.map((item: any) => ({
+          date: item.created_at.split('T')[0],
+          value: parseFloat(item.usage_amount)
+        })));
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUsageData();
+  }, [dateRange, activeTab]);
+
+  const handleDateRangeChange = (startDate: Date, endDate: Date) => {
+    setDateRange({ startDate, endDate });
+  };
 
   return (
     <Box p={6} bg="white" minH="calc(100vh - 64px)">
-      <Flex justify="space-between" align="center" mb={6}>
-        <Heading size="lg" color="#1A202C">Usage</Heading>
-        <CustomDateRangePicker dateRange={dateRange} setDateRange={setDateRange} />
-      </Flex>
-      <HStack spacing={4} mb={6}>
+      <VStack align="stretch" spacing={6}>
+        <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
+          <Heading size="lg" color="#1A202C">Usage</Heading>
+          <SimpleDateRangePicker
+            startDate={dateRange.startDate}
+            endDate={dateRange.endDate}
+            onDateRangeChange={handleDateRangeChange}
+          />
+        </Flex>
         <CustomTabs
           tabs={[
             { label: 'Cost', value: 'cost' },
@@ -34,19 +65,8 @@ export default function Usage() {
           activeTab={activeTab}
           onChange={(value) => setActiveTab(value as 'cost' | 'activity')}
         />
-      </HStack>
-      <UsageTable dataType={activeTab} dateRange={dateRange} />
-      {/* <Flex justify="flex-end" mt={6}>
-        <Button 
-          leftIcon={<FiDollarSign />} 
-          bg="purple.100" 
-          color="purple.700" 
-          _hover={{ bg: "purple.200" }}
-          fontWeight="normal"
-        >
-          Add Credits
-        </Button>
-      </Flex> */}
+        <UsageTable dataType={activeTab} data={usageData} />
+      </VStack>
     </Box>
   );
 }
