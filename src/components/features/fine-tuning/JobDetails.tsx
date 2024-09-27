@@ -116,7 +116,7 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     return <Text>Job not found</Text>;
   }
 
-  const isDownloadable = true // jobDetails.status.toLowerCase() === 'completed';
+  const isDownloadable = jobDetails.status.toLowerCase() === 'completed';
 
   const renderDownloadButtons = () => {
     if (isArtifactsLoading) {
