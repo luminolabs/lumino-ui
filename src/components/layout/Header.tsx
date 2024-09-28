@@ -25,10 +25,10 @@ const Header = () => {
   };
 
   return (
-    <Box as="header" bg="white" boxShadow="sm" py={4} px={8}>
-      <Flex maxW="container.xl" mx="auto" alignItems="center">
+    <Box as="header" bg="#F2F2F2" boxShadow="sm" py={4} px={8}>
+      <Flex maxW="container.xl" alignItems="center">
         <NextLink href="/" passHref>
-          <Flex as="a" alignItems="center">
+          <Flex as="a" marginLeft="5" alignItems="center">
             <Box position="absolute" width="128px" height="32px">
               <Image
                 src="/logo.svg"
