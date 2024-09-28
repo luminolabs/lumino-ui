@@ -65,7 +65,7 @@ export default function FineTuningPage() {
   }
 
   return (
-    <Box p={4} bg="gray.50" minH="calc(100vh - 64px)">
+    <Box p={4} bg="#F2F2F2" minH="calc(100vh - 64px)">
       <Flex mb={6} direction={isMobile ? "column" : "row"} justify="space-between" align={isMobile ? "stretch" : "center"}>
         <Heading size="lg" color="#261641" mb={isMobile ? 4 : 0}>Fine-tuning</Heading>
         <Button 

@@ -19,7 +19,7 @@ const Sidebar = () => {
   );
 
   return (
-    <Box width="250px" bg="gray.100" height="auto" p={4} overflowY="auto">
+    <Box width="250px" bg="#F2F2F2" height="auto" p={4} overflowY="auto">
       <VStack align="stretch" spacing={2} paddingLeft="inherit" paddingRight="inherit">
         <Link href="/fine-tuning" passHref>
           <Button

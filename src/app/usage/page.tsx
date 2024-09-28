@@ -47,7 +47,7 @@ export default function Usage() {
   };
 
   return (
-    <Box p={6} bg="white" minH="calc(100vh - 64px)">
+    <Box p={6} bg="#F2F2F2" minH="calc(100vh - 64px)">
       <VStack align="stretch" spacing={6}>
         <Flex justify="space-between" align="center" wrap="wrap" gap={4}>
           <Heading size="lg" color="#1A202C">Usage</Heading>
