@@ -14,24 +14,46 @@ import {
   NumberIncrementStepper,
   NumberDecrementStepper,
   Spinner,
+  useToast,
 } from "@chakra-ui/react";
 import { FiDollarSign } from "react-icons/fi";
 import { fetchWithAuth } from "@/utils/api";
+import { useParams } from "next/navigation";
 
 const BillingSettings = () => {
   const [amount, setAmount] = useState(10);
   const [creditsBalance, setCreditsBalance] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const toast = useToast();
 
   useEffect(() => {
+   if (window.location.href.split('?')[1] === "stripe_success=2") {
+    toast({
+      title: 'Payment method Updated',
+      description: 'Successfully added/updated payment method.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+   }
+   if (window.location.href.split('?')[1] === "stripe_success=1") {
+    toast({
+      title: 'Credits added',
+      description: 'Successfully added credits.',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+   }
+    
     fetchUserData();
   }, []);
 
   const handleAddCredits = async () => {
     const redirectUrl = `/api/proxy/v1/billing/credits-add?amount_dollars=${amount}`;
     try {
-      const response = await fetch(redirectUrl, { 
+      const response = await fetch(redirectUrl, {
         method: 'GET',
         credentials: 'include'
       });
@@ -48,6 +70,43 @@ const BillingSettings = () => {
       }
     } catch (error) {
       console.error('Error adding credits:', error);
+      toast({
+        title: 'Error adding credits',
+        description: 'Please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      // Handle error (e.g., show an error message to the user)
+    }
+  };
+  const handleAddUpdatePayment = async () => {
+    const redirectUrl = `/api/proxy/v1/billing/payment-method-add`;
+    try {
+      const response = await fetch(redirectUrl, {
+        method: 'GET',
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.redirect_url) {
+          // Redirect to the URL provided by the server
+          window.location.href = data.redirect_url;
+        } else {
+          console.error('No redirect URL provided');
+        }
+      } else {
+        console.error('Error response:', response.status);
+      }
+    } catch (error) {
+      console.error('Error adding payment method:', error);
+      toast({
+        title: 'Error adding/updating payment method',
+        description: 'Please try again later.',
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
       // Handle error (e.g., show an error message to the user)
     }
   };
@@ -108,6 +167,11 @@ const BillingSettings = () => {
           {Number.isNaN(amount) || amount === 0 ?
             `Add $0 Credits` : `Add $${amount} Credits`}
         </Button>
+        <Box>
+          <Button onClick={handleAddUpdatePayment} variant="link" pt="10px" color="#6B46C1">
+            Add / Update Billing
+          </Button>
+        </Box>
       </Box>
     </VStack>
   );
