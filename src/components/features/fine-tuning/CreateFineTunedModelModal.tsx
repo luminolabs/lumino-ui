@@ -233,7 +233,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                 <MenuList bg="white">
                   {baseModels.map((model) => (
                     <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key={model.id} onClick={() => setSelectedBaseModel(model.name)}>
-                      {model.name} ({model.description})
+                      {model.description}
                     </MenuItem>
                   ))}
                 </MenuList>

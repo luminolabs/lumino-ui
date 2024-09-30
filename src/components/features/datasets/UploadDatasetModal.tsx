@@ -51,6 +51,9 @@ const UploadDatasetModal: React.FC<UploadDatasetModalProps> = ({
     if (!datasetName.trim()) {
       setNameError("Dataset name is required");
       isValid = false;
+    } if (datasetName.includes(" ")) {
+      setNameError("Dataset name cannot contain space");
+      isValid = false;
     } else {
       setNameError("");
     }
