@@ -233,7 +233,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                 <MenuList bg="white">
                   {baseModels.map((model) => (
                     <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key={model.id} onClick={() => setSelectedBaseModel(model.name)}>
-                      {model.name} ({model.description})
+                      {model.description}
                     </MenuItem>
                   ))}
                 </MenuList>
@@ -331,7 +331,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                   <Text>Number of epochs</Text>
                   <Slider
                     min={0}
-                    max={20}
+                    max={10}
                     step={1}
                     value={numEpochs}
                     onChange={(value) => setNumEpochs(value)}
@@ -357,7 +357,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                   <Text>Batch Size</Text>
                   <Slider
                     min={0}
-                    max={20}
+                    max={32}
                     step={1}
                     value={batchSize}
                     onChange={(value) => setBatchSize(value)}
@@ -381,9 +381,9 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                 <Box className="lumino-purple-dark">
                   <Text>Learning Rate</Text>
                   <Slider
-                    min={0}
-                    max={20}
-                    step={1}
+                    min={0.0001}
+                    max={0.01}
+                    step={0.0001}
                     value={learningRate}
                     onChange={(value) => setLearningRate(value)}
                   >
@@ -397,7 +397,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                       color="#4e00a6"
                       mt='2'
                       ml='-6'
-                      w='12'
+                      w='14'
                     >
                       {learningRate}
                     </SliderMark>

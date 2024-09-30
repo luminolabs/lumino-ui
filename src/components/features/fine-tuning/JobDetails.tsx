@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack } from '@chakra-ui/react';
 import { DownloadIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
-import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, IdentificationIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, HomeIcon, HomeModernIcon, IdentificationIcon, ServerIcon, ServerStackIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 
 interface JobDetail {
   id: string;
@@ -167,20 +167,16 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
       <SimpleGrid columns={[1, 2, 3]} spacing={4}>
         <DetailItem icon={IdentificationIcon} label="Name" value={jobDetails.name} />
         <DetailItem icon={CheckCircleIcon} label="Status" value={jobDetails.status} color={getStatusColor(jobDetails.status)} />
-        <DetailItem icon={CpuChipIcon} label="Base Model" value={jobDetails.base_model_name} />
-        <DetailItem icon={CalendarIcon} label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
-        <DetailItem icon={ClockIcon} label="Current Epoch" value={jobDetails.current_epoch || 'N/A'} />
-        <DetailItem icon={ArrowPathIcon} label="Current Step" value={jobDetails.current_step || 'N/A'} />
+        <DetailItem icon={HomeIcon} label="Base Model" value={jobDetails.base_model_name} />
+        <DetailItem icon={HomeModernIcon} label="Output Model" value={jobDetails.base_model_name + "_" + jobDetails.id} />
+        <DetailItem icon={ClockIcon} label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
         <DetailItem icon={CircleStackIcon} label="Dataset Name" value={jobDetails.dataset_name} />
-        <DetailItem icon={ChartBarIcon} label="Metrics" value={jobDetails.metrics || 'N/A'} />
         <DetailItem icon={HashtagIcon} label="Number of Tokens" value={jobDetails.num_tokens?.toLocaleString() || 'N/A'} />
-        <DetailItem icon={ArrowPathRoundedSquareIcon} label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
+        <DetailItem icon={ArrowPathIcon} label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
         <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
-        <DetailItem icon={ViewColumnsIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
-        <DetailItem icon={CubeTransparentIcon} label="Use lora" value={jobDetails.parameters.use_lora.toString()} />
-        <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} />
-        <DetailItem icon={ArrowPathRoundedSquareIcon} label="Total Epochs" value={jobDetails.total_epochs || 'N/A'} />
-        <DetailItem icon={ForwardIcon} label="Total Steps" value={jobDetails.total_steps || 'N/A'} />
+        <DetailItem icon={ServerStackIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
+        <DetailItem icon={CubeTransparentIcon} label="Type of finetuning" value={jobDetails.parameters.use_lora.toString() === 'true' ? "lora" : "qlora"} />
+        {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
       </SimpleGrid>
       {isDownloadable ? (
         <Box mt={4}>

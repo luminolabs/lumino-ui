@@ -4,7 +4,8 @@ import { fetchWithAuth } from '@/utils/api';
 import { 
   IdentificationIcon, CheckCircleIcon, DocumentTextIcon, CalendarIcon, 
   ClockIcon, InformationCircleIcon, DocumentIcon, ArrowsUpDownIcon,
-  ExclamationCircleIcon
+  ExclamationCircleIcon,
+  Bars3Icon
 } from '@heroicons/react/24/outline';
 
 interface DatasetDetails {
@@ -86,14 +87,13 @@ const DatasetDetails = ({ datasetName }: { datasetName: string }) => {
   return (
     <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
       <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-        <DetailItem icon={IdentificationIcon} label="Id" value={datasetDetails.id} />
-        <DetailItem icon={CheckCircleIcon} label="Status" value={datasetDetails.status} color={getStatusColor(datasetDetails.status)} />
         <DetailItem icon={DocumentTextIcon} label="Name" value={datasetDetails.name} />
-        <DetailItem icon={CalendarIcon} label="Created At" value={new Date(datasetDetails.created_at).toLocaleString()} />
-        <DetailItem icon={ClockIcon} label="Last Updated" value={new Date(datasetDetails.updated_at).toLocaleString()} />
+        <DetailItem icon={IdentificationIcon} label="File-Id" value={datasetDetails.id} />
+        <DetailItem icon={ClockIcon} label="Created At" value={new Date(datasetDetails.created_at).toLocaleString()} />
+        <DetailItem icon={CheckCircleIcon} label="Status" value={datasetDetails.status} color={getStatusColor(datasetDetails.status)} />
         <DetailItem icon={InformationCircleIcon} label="Description" value={datasetDetails.description || 'No description'} />
         <DetailItem icon={DocumentIcon} label="File Name" value={datasetDetails.file_name} />
-        <DetailItem icon={ArrowsUpDownIcon} label="File Size" value={formatFileSize(datasetDetails.file_size)} />
+        <DetailItem icon={Bars3Icon} label="File Size" value={formatFileSize(datasetDetails.file_size)} />
         {datasetDetails.errors && (
           <DetailItem icon={ExclamationCircleIcon} label="Errors" value={datasetDetails.errors} color="red.500" />
         )}

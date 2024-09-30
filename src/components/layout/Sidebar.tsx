@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Box, VStack, Button, Collapse, Text } from '@chakra-ui/react';
 import {
   CpuChipIcon,
-  ServerIcon,
-  ChartBarSquareIcon
+  ChartBarSquareIcon,
+  CircleStackIcon
 } from '@heroicons/react/24/solid';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
@@ -41,7 +41,7 @@ const Sidebar = () => {
           <Button
             style={{ alignContent: "center" }}
             as="a"
-            leftIcon={<IconWrapper><ServerIcon /></IconWrapper>}
+            leftIcon={<IconWrapper><CircleStackIcon /></IconWrapper>}
             justifyContent="flex-start"
             bg={isActive('/datasets') ? '#D6C6F6' : 'transparent'}
             color={isActive('/datasets') ? '#4E00A6' : '#261641'}
