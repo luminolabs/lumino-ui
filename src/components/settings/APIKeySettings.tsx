@@ -18,12 +18,12 @@ import { FiCopy } from 'react-icons/fi';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { fetchWithAuth } from '@/utils/api';
+import { PlusCircleIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const APIKeySettings: React.FC = () => {
-    const [apiKeys, setApiKeys] = useState<Array<{ id: string; name: string; expires_at: string; status: string }>>([]);
+    const [apiKeys, setApiKeys] = useState<Array<{ id: string; name: string; expires_at: string; status: string, prefix: string }>>([]);
     const [newKeyName, setNewKeyName] = useState('');
     const [newKeyExpiration, setNewKeyExpiration] = useState<Date | null>(null);
-    const [showRevokedKeys, setShowRevokedKeys] = useState(false);
     const [newApiKeySecret, setNewApiKeySecret] = useState<string | null>(null);
     const { onCopy, hasCopied } = useClipboard(newApiKeySecret || '')
     const toast = useToast();
@@ -116,10 +116,11 @@ const APIKeySettings: React.FC = () => {
         }
     };
 
-    const toggleApiKeyList = () => {
-        setShowRevokedKeys((prevState) => !prevState);
-        console.log("Toggled key list. Showing revoked keys?", !showRevokedKeys);
-    };
+    const IconWrapper = ({ children }: { children: React.ReactNode }) => (
+        <Box width="24px" height="24px">
+          {children}
+        </Box>
+      );      
 
     console.log("Current API keys state:", apiKeys); // Log the state of the API keys
 
@@ -144,10 +145,8 @@ const APIKeySettings: React.FC = () => {
                 <DatePicker
                     selected={newKeyExpiration}
                     onChange={(date: Date | null) => setNewKeyExpiration(date)}  // Allow null value
-                    showTimeSelect
                     timeFormat="HH:mm"
-                    timeIntervals={15}
-                    dateFormat="MM/dd/yyyy h:mm aa"
+                    dateFormat="MM/dd/yyyy"
                     placeholderText="Select expiration date & time"
                     customInput={
                         <Input
@@ -159,7 +158,9 @@ const APIKeySettings: React.FC = () => {
                         />
                     }
                 />
-                <Button color="white"
+                <Button 
+                    leftIcon={<IconWrapper> <PlusCircleIcon /></IconWrapper>}
+                    color="white"
                     bg="#4e00a6"
                     _hover={{ bg: "#0005A6" }} onClick={createApiKey}>
                     Create API Key
@@ -194,39 +195,21 @@ const APIKeySettings: React.FC = () => {
             <Divider />
 
             {/* API Keys List Section */}
-            <HStack spacing={2}>
-                <Button color="white"
-                    bg="#4e00a6"
-                    _hover={{ bg: "#0005A6" }} onClick={toggleApiKeyList} width="full">
-                    {showRevokedKeys ? 'Show Active Keys' : 'Show Revoked Keys'}
-                </Button>
-            </HStack>
-
             <Box mt={4}>
                 <Heading size="sm" color="#333">Active Keys</Heading>
                 <VStack align="stretch">
-                    {!showRevokedKeys ? apiKeys
+                    {apiKeys
                         .filter((key) => key.status === 'ACTIVE') // Show only active keys
                         .map((key) => (
                             <HStack key={key.id} justify="space-between" bg="white" p={2} borderRadius="md">
                                 <Text color="gray"> {/* Ensure text color is black */}
-                                    {key.name} (Expires: {new Date(key.expires_at).toLocaleString()})
+                                   {key.prefix}********  ({key.name}: {new Date(key.expires_at).toLocaleString()})
                                 </Text>
-                                <Button colorScheme="red" size="sm" onClick={() => { revokeApiKey(key.name) }}>
-                                    Revoke
+                                <Button color="black" _hover={{ bg: "red", color: "white" }} size="sm" onClick={() => { revokeApiKey(key.name) }}>
+                                <IconWrapper> <TrashIcon /></IconWrapper>
                                 </Button>
                             </HStack>
-                        )) :
-                        apiKeys
-                            .filter((key) => key.status === 'REVOKED') // Show only active keys
-                            .map((key) => (
-                                <HStack key={key.id} justify="space-between" bg="white" p={2} borderRadius="md">
-                                    <Text color="gray">
-                                        {key.name} (Expired)
-                                    </Text>
-                                </HStack>
-                            ))
-                    }
+                    ))}
                 </VStack>
             </Box>
         </VStack>

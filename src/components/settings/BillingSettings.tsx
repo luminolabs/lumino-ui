@@ -72,9 +72,8 @@ const BillingSettings = () => {
         Billing
       </Heading>
       <HStack marginLeft="auto">
-        <FiDollarSign />
         <Text fontWeight="bold" color="#261641">
-          Credits Left:
+          Credits:
         </Text>
         {isLoading ? (
           <Spinner size="sm" />
@@ -91,10 +90,10 @@ const BillingSettings = () => {
           onChange={(valueString) => setAmount(parseInt(valueString))}
           min={1}
         >
-          <NumberInputField color="gray" />
-          <NumberInputStepper color="gray">
-            <NumberIncrementStepper color="gray" />
-            <NumberDecrementStepper color="gray" />
+          <NumberInputField color="black" />
+          <NumberInputStepper color="black">
+            <NumberIncrementStepper color="black" />
+            <NumberDecrementStepper color="black" />
           </NumberInputStepper>
         </NumberInput>
       </Box>
@@ -107,7 +106,7 @@ const BillingSettings = () => {
           onClick={handleAddCredits}
         >
           {Number.isNaN(amount) || amount === 0 ?
-            `Add $0 Credits` : `Add ${amount} Credits`}
+            `Add $0 Credits` : `Add $${amount} Credits`}
         </Button>
       </Box>
     </VStack>
