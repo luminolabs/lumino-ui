@@ -3,7 +3,7 @@ import { Box, Flex, Spacer, Link, IconButton, Menu, MenuButton, MenuList, MenuIt
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
-import { Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { CogIcon } from '@heroicons/react/24/outline';
 
 const Header = () => {
   const { isLoggedIn, logout } = useAuth();
@@ -28,8 +28,8 @@ const Header = () => {
     <Box as="header" bg="#F2F2F2" boxShadow="sm" py={4} px={8}>
       <Flex maxW="container.xl" alignItems="center">
         <NextLink href="/" passHref>
-          <Flex as="a" marginLeft="5" alignItems="center">
-            <Box position="absolute" width="128px" height="32px">
+          <Flex as="a" marginLeft="2.5" alignItems="center">
+            <Box position="absolute" width="128px" height="48px">
               <Image
                 src="/logo.svg"
                 alt="Lumino Logo"
@@ -41,14 +41,14 @@ const Header = () => {
         </NextLink>
         <Spacer />
         <Flex gap={6} alignItems="center">
-          <Link as={NextLink} href="https://docs.luminolabs.ai" target="_blank" color="gray.600">
+          <Link _hover={{ borderRadius: "10px",  bg: '#D6C6F6', color: '#4E00A6' }} as={NextLink} href="https://docs.luminolabs.ai" target="_blank" color="gray.600">
             Docs
           </Link>
           {isLoggedIn ? (
             <Menu>
               <MenuButton
                 as={IconButton}
-                icon={<Cog6ToothIcon style={{ width: '24px', height: '24px' }} />}
+                icon={<CogIcon style={{ width: '24px', height: '24px' }} />}
                 color="black"
                 _hover={{ color: "#0005A6" }}
                 aria-label="Settings"
@@ -57,12 +57,18 @@ const Header = () => {
                 <NextLink href="/settings" passHref>
                   <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Settings</MenuItem>
                 </NextLink>
+                <NextLink href="https://www.luminolabs.ai/privacy-policy" target="_blank">
+                  <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Privacy Policy</MenuItem>
+                </NextLink>
+                <NextLink href="https://www.luminolabs.ai/terms-of-use" target="_blank">
+                  <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Terms of use</MenuItem>
+                </NextLink>
                 <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} onClick={handleLogout}>Logout</MenuItem>
               </MenuList>
             </Menu>
           ) : (
             <IconButton
-              icon={<Cog6ToothIcon style={{ width: '24px', height: '24px' }} />}
+              icon={<CogIcon style={{ width: '24px', height: '24px' }} />}
               color="white"
               _hover={{ bg: '#D6C6F6', color: '#4E00A6' }}
               onClick={() => window.location.reload()}
