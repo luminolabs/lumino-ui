@@ -63,9 +63,11 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     const fetchArtifacts = async () => {
       if (!jobName) return;
       try {
-        setIsArtifactsLoading(true);
-        const data = await fetchWithAuth(`/models/fine-tuned/${jobName}_model`);
-        setArtifacts(data.artifacts);
+        if (jobDetails?.status.toLocaleLowerCase() === "completed") {
+          setIsArtifactsLoading(true);
+          const data = await fetchWithAuth(`/models/fine-tuned/${jobName}_model`);
+          setArtifacts(data.artifacts);
+        }
       } catch (error) {
         console.error('Error fetching artifacts:', error);
         toast({
