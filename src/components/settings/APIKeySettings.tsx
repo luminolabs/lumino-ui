@@ -44,6 +44,16 @@ const APIKeySettings: React.FC = () => {
             });
             return;
         }
+        if (newKeyExpiration < (new Date())) {
+            toast({
+                title: 'Error',
+                description: 'Expiration date cannot be in past.',
+                status: 'error',
+                duration: 5000,
+                isClosable: true,
+            });
+            return;
+        }
 
         try {
             const response = await fetchWithAuth('/api-keys', {
