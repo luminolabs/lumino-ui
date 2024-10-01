@@ -89,7 +89,7 @@ const UsageTable: React.FC<UsageTableProps> = ({ dataType, data }) => {
         <Thead>
           <Tr>
             <Th color="#4e00a6" fontSize="sm" fontWeight="bold" pb={4}>DATE</Th>
-            <Th color="#4e00a6" fontSize="sm" fontWeight="bold" isNumeric pb={4}>{dataType === 'cost' ? 'COST' : 'TOKENS TRAINED'}</Th>
+            <Th color="#4e00a6" fontSize="sm" fontWeight="bold" isNumeric pb={4}>{dataType === 'cost' ? 'COST' : 'TOKENS USED'}</Th>
           </Tr>
         </Thead>
         <Tbody>
