@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Box, Flex, Spacer, Link, IconButton, Menu, MenuButton, MenuList, MenuItem, useToast } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
@@ -44,7 +44,7 @@ const Header = () => {
         </NextLink>
         <Spacer />
         <Flex gap={6} alignItems="center">
-          <Link _hover={{ color: '#4E00A6' }} as={NextLink} href="/fine-tuning" color="gray.600">
+          <Link _hover={{ color: '#4E00A6' }} color={pathname.split("/")[1] === "fine-tuning" ? "#4E00A6" : "gray.600"} as={NextLink} href="/fine-tuning">
             Dashboard
           </Link>
           <Link _hover={{ color: '#4E00A6' }} as={NextLink} href="https://docs.luminolabs.ai" target="_blank" color="gray.600">
@@ -76,7 +76,7 @@ const Header = () => {
           ) : (
             <IconButton
               icon={<CogIcon style={{ width: '24px', height: '24px' }} />}
-              color={pathname === "/settings" ? "#4E00A6" : "black"}
+              color={pathname === "/settings" ? "#4E00A6" : "gray.600"}
               bg="transparent"
               _hover={{ color: "#4E00A6", bg: "#F3E8FF" }}
               onClick={() => router.push('/settings')}
