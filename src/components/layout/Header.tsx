@@ -4,10 +4,13 @@ import NextLink from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
 import { CogIcon } from '@heroicons/react/24/outline';
+import { usePathname, useRouter } from 'next/navigation';
 
 const Header = () => {
   const { isLoggedIn, logout } = useAuth();
   const toast = useToast();
+  const pathname = usePathname();
+  const router = useRouter();
 
   const handleLogout = async () => {
     try {
@@ -41,7 +44,10 @@ const Header = () => {
         </NextLink>
         <Spacer />
         <Flex gap={6} alignItems="center">
-          <Link _hover={{ borderRadius: "10px",  bg: '#D6C6F6', color: '#4E00A6' }} as={NextLink} href="https://docs.luminolabs.ai" target="_blank" color="gray.600">
+          <Link _hover={{ color: '#4E00A6' }} as={NextLink} href="/fine-tuning" color="gray.600">
+            Dashboard
+          </Link>
+          <Link _hover={{ color: '#4E00A6' }} as={NextLink} href="https://docs.luminolabs.ai" target="_blank" color="gray.600">
             Docs
           </Link>
           {isLoggedIn ? (
@@ -49,8 +55,9 @@ const Header = () => {
               <MenuButton
                 as={IconButton}
                 icon={<CogIcon style={{ width: '24px', height: '24px' }} />}
-                color="black"
-                _hover={{ color: "#0005A6" }}
+                color={pathname === "/settings" ? "#4E00A6" : "black"}
+                bg="transparent"
+                _hover={{ color: "#4E00A6", bg: "#F3E8FF" }}
                 aria-label="Settings"
               />
               <MenuList bg="white">
@@ -61,7 +68,7 @@ const Header = () => {
                   <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Privacy Policy</MenuItem>
                 </NextLink>
                 <NextLink href="https://www.luminolabs.ai/terms-of-use" target="_blank">
-                  <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Terms of use</MenuItem>
+                  <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} as="a">Terms of Use</MenuItem>
                 </NextLink>
                 <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} onClick={handleLogout}>Logout</MenuItem>
               </MenuList>
@@ -69,10 +76,11 @@ const Header = () => {
           ) : (
             <IconButton
               icon={<CogIcon style={{ width: '24px', height: '24px' }} />}
-              color="white"
-              _hover={{ bg: '#D6C6F6', color: '#4E00A6' }}
-              onClick={() => window.location.reload()}
-              aria-label="Login"
+              color={pathname === "/settings" ? "#4E00A6" : "black"}
+              bg="transparent"
+              _hover={{ color: "#4E00A6", bg: "#F3E8FF" }}
+              onClick={() => router.push('/settings')}
+              aria-label="Settings"
             />
           )}
         </Flex>

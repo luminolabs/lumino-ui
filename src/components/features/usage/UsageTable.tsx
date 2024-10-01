@@ -75,7 +75,7 @@
 
 // src/components/features/usage/UsageTable.tsx
 import React from 'react';
-import { Table, Thead, Tbody, Tr, Th, Td, Box, Text } from '@chakra-ui/react';
+import { Table, Thead, Tbody, Tr, Th, Td, Box } from '@chakra-ui/react';
 
 interface UsageTableProps {
   dataType: 'cost' | 'activity';
@@ -88,15 +88,15 @@ const UsageTable: React.FC<UsageTableProps> = ({ dataType, data }) => {
       <Table variant="simple">
         <Thead>
           <Tr>
-            <Th color="gray.500" fontSize="sm" fontWeight="medium" pb={4}>DATE</Th>
-            <Th color="gray.500" fontSize="sm" fontWeight="medium" isNumeric pb={4}>{dataType === 'cost' ? 'COST' : 'USAGE'}</Th>
+            <Th color="#4e00a6" fontSize="sm" fontWeight="bold" pb={4}>DATE</Th>
+            <Th color="#4e00a6" fontSize="sm" fontWeight="bold" isNumeric pb={4}>{dataType === 'cost' ? 'COST' : 'TOKENS TRAINED'}</Th>
           </Tr>
         </Thead>
         <Tbody>
           {data.map((item, index) => (
             <Tr key={index}>
-              <Td color="gray.500" borderBottom="1px" borderColor="gray.200" py={4}>{item.date}</Td>
-              <Td color="gray.500" borderBottom="1px" borderColor="gray.200" isNumeric py={4}>{item.value.toFixed(2)}</Td>
+              <Td color="#4e00a6" borderBottom="1px" borderColor="gray.200" py={4}>{item.date}</Td>
+              <Td color="#4e00a6" borderBottom="1px" borderColor="gray.200" isNumeric py={4}>{dataType === 'cost' ? `$ ${item.value.toFixed(2)}` : `${item.value}` }</Td>
             </Tr>
           ))}
         </Tbody>
