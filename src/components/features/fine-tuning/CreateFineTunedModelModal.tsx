@@ -66,6 +66,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   const [selectedBaseModel, setSelectedBaseModel] = useState<string>("");
   const [datasets, setDatasets] = useState<Datasets[]>([]);
   const [selectedDatasets, setSelectedDatasets] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<string>("FULL");
   const [jobName, setJobName] = useState<string>("");
   const [batchSize, setBatchSize] = useState<number>(2);
   const [learningRate, setLearningRate] = useState<number>(0.003);
@@ -98,9 +99,8 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
         batch_size: batchSize,
         shuffle: shuffle,
         num_epochs: numEpochs,
-        use_lora: useLora,
-        use_qlora: useQlora,
       },
+      type: selectedType,
       name: jobName,
     };
 
@@ -260,6 +260,26 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
             </Box>
 
             <Box>
+              <Text {...labelStyle}>Type of Fine-Tuning</Text>
+              <Menu>
+                <MenuButton as={Button} {...buttonStyle} rightIcon={<ChevronDownIcon />}>
+                  {selectedType}
+                </MenuButton>
+                <MenuList bg="white">
+                    <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="FULL" onClick={() => setSelectedType("FULL")}>
+                      FULL
+                    </MenuItem>
+                    <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="LORA" onClick={() => setSelectedType("LORA")}>
+                      LORA
+                    </MenuItem>
+                    <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="QLORA" onClick={() => setSelectedType("QLORA")}>
+                      QLORA
+                    </MenuItem>
+                </MenuList>
+              </Menu>
+            </Box>
+
+            <Box>
               <Text {...labelStyle}>Seed</Text>
               <Input
                 {...inputStyle}
@@ -270,6 +290,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                 _placeholder={{ color: "gray.400" }}
               />
             </Box>
+
             {/* <Box>
               <Text fontWeight="bold">Training Data</Text>
               <Text fontSize="sm" color="gray.500">
@@ -360,7 +381,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                   <Text>Batch Size</Text>
                   <Slider
                     min={0}
-                    max={32}
+                    max={10}
                     step={1}
                     value={batchSize}
                     onChange={(value) => setBatchSize(value)}

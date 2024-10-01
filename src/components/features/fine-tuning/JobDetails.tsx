@@ -21,6 +21,7 @@ interface JobDetail {
     use_qlora: boolean;
     num_epochs: number;
   }
+  type: string;
   status: string;
   total_epochs: number;
   total_steps: number;
@@ -174,7 +175,8 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
         <DetailItem icon={ArrowPathIcon} label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
         <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
         <DetailItem icon={ServerStackIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
-        <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "QLoRA"} />
+        {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.type} /> */}
+        <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} />
         {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
       </SimpleGrid>
       {isDownloadable ? (
