@@ -1,7 +1,8 @@
 'use client'
 
 import React, { useState } from 'react';
-import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue, useDisclosure, Link } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import dynamic from 'next/dynamic';
 import { useParams } from 'next/navigation';
 import { Suspense } from 'react';
@@ -57,6 +58,9 @@ export default function DatasetsPage() {
         >
           Upload Dataset
         </Button>
+        <Link as={NextLink} href="https://docs.luminolabs.ai/data-preparation" target="_blank" paddingLeft="4" width={isMobile ? "100%" : "auto"} alignContent="center" color="#4e00a6">
+          Learn More
+        </Link>
       </Flex>
       <Flex direction={isMobile ? "column" : "row"} height="100%">
         <Box width={isMobile ? "100%" : "35%"} bg="white" borderRadius="md" boxShadow="sm" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>
