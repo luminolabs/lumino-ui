@@ -25,6 +25,9 @@ import {
   Menu,
   MenuList,
   MenuItem,
+  RadioGroup,
+  Stack,
+  Radio,
 } from "@chakra-ui/react";
 import { fetchWithAuth } from "@/utils/api";
 import "@/app/global.css"
@@ -402,6 +405,15 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                       {learningRate}
                     </SliderMark>
                   </Slider>
+                </Box>
+                <Box>
+                  <Text>Shuffle</Text>
+                  <RadioGroup onChange={(value) => setShuffle(value === 'true')} value={shuffle.toString()}>
+                    <Stack direction="row">
+                      <Radio borderColor="gray.600" colorScheme="purple" value="true">True</Radio>
+                      <Radio borderColor="gray.600" colorScheme="purple" value="false">False</Radio>
+                    </Stack>
+                  </RadioGroup>
                 </Box>
               </VStack>
             </Box>
