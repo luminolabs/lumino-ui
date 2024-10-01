@@ -73,8 +73,8 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   const [shuffle, setShuffle] = useState<boolean>(true);
   const [seed, setSeed] = useState<number>(9347235);
   const [numEpochs, setNumEpochs] = useState<number>(1);
-  const [useLora, setUseLora] = useState<boolean>(true);
-  const [useQlora, setUseQlora] = useState<boolean>(false);
+  // const [useLora, setUseLora] = useState<boolean>(true);
+  // const [useQlora, setUseQlora] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const toast = useToast();
 
@@ -99,6 +99,8 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
         batch_size: batchSize,
         shuffle: shuffle,
         num_epochs: numEpochs,
+        seed: seed,
+        lr: learningRate,
       },
       type: selectedType,
       name: jobName,
