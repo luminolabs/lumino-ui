@@ -1,12 +1,13 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue, useDisclosure } from '@chakra-ui/react';
+import { Box, Flex, Heading, Button, Text, Spinner, useBreakpointValue, useDisclosure, Link } from '@chakra-ui/react';
+import NextLink from 'next/link';
 import dynamic from 'next/dynamic';
 import { useParams, useRouter } from 'next/navigation';
 import { Suspense } from 'react';
 import UploadDatasetModal from '@/components/features/datasets/UploadDatasetModal';
-import { PlusCircleIcon } from '@heroicons/react/24/outline';
+import { ArrowUpRightIcon, PlusCircleIcon } from '@heroicons/react/24/outline';
 
 const DatasetList = dynamic(() => import('@/components/features/datasets/DatasetList'), {
   loading: () => <Spinner />,
@@ -80,6 +81,9 @@ export default function DatasetsPage() {
         >
           Upload Dataset
         </Button>
+        <Link as={NextLink} href="https://docs.luminolabs.ai/data-preparation" target="_blank" paddingLeft="4" width={isMobile ? "100%" : "auto"} alignContent="center" color="#4e00a6">
+          Learn More
+        </Link>
       </Flex>
       <Flex direction={isMobile ? "column" : "row"} height="100%">
         <Box width={isMobile ? "100%" : "35%"} bg="white" borderRadius="md" boxShadow="sm" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>

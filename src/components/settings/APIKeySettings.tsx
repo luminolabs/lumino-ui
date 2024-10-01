@@ -76,8 +76,28 @@ const APIKeySettings: React.FC = () => {
                 duration: 5000,
                 isClosable: true,
             });
-        } catch (error) {
+        } catch (error: any) {
             console.error('Error creating API key:', error);
+            const err = error.toString()
+            console.log(err);
+            
+            if (err.includes("422 Unprocessable Entity")) {
+                toast({
+                    title: 'Duplicate Name Error',
+                    description: 'Cannot create an API key with same name as previous active/expired keys',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                });
+            } else {
+                toast({
+                    title: 'Error',
+                    description: 'Unknown Error Occured',
+                    status: 'error',
+                    duration: 5000,
+                    isClosable: true,
+                });
+            }
         }
     };
 
