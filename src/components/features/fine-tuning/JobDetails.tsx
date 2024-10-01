@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack } from '@chakra-ui/react';
+import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack, Link } from '@chakra-ui/react';
 import { DownloadIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
 import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, HomeIcon, HomeModernIcon, IdentificationIcon, ServerIcon, ServerStackIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
@@ -63,20 +63,20 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     const fetchArtifacts = async () => {
       if (!jobName) return;
       try {
-        if (jobDetails?.status.toLocaleLowerCase() === "completed") {
-          setIsArtifactsLoading(true);
-          const data = await fetchWithAuth(`/models/fine-tuned/${jobName}_model`);
-          setArtifacts(data.artifacts);
-        }
+        setIsArtifactsLoading(true);
+        const data = await fetchWithAuth(`/models/fine-tuned/${jobName}_model`);
+        setArtifacts(data.artifacts);
       } catch (error) {
         console.error('Error fetching artifacts:', error);
-        toast({
-          title: 'Error fetching artifacts',
-          description: 'Unable to load downloadable files.',
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
+        if (jobDetails?.status.toLocaleLowerCase() === "completed") {
+          toast({
+            title: 'Error fetching artifacts',
+            description: 'Unable to load downloadable files.',
+            status: 'error',
+            duration: 5000,
+            isClosable: true,
+          });
+        }
       } finally {
         setIsArtifactsLoading(false);
       }
@@ -143,14 +143,11 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     const allFiles = [...artifacts.weight_files, ...artifacts.other_files];
 
     return (
-      <SimpleGrid columns={3} spacing={2}>
+      <VStack alignItems="flex-start">
         {allFiles.map((file) => (
-          <Button
+          <Link
             key={file}
-            leftIcon={<DownloadIcon />}
-            color="white"
-            bg="#4e00a6"
-            _hover={{ bg: "#0005A6" }}
+            color="#4e00a6"
             onClick={() => handleDownload(`${artifacts!.base_url}/${file}`)}
             size="sm"
             height="auto"
@@ -158,9 +155,9 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
             py={2}
           >
             {file}
-          </Button>
+          </Link>
         ))}
-      </SimpleGrid>
+      </VStack>
     );
   };
 
@@ -177,7 +174,7 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
         <DetailItem icon={ArrowPathIcon} label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
         <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
         <DetailItem icon={ServerStackIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
-        <DetailItem icon={CubeTransparentIcon} label="Type of finetuning" value={jobDetails.parameters.use_lora.toString() === 'true' ? "lora" : "qlora"} />
+        <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "QLoRA"} />
         {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
       </SimpleGrid>
       {isDownloadable ? (

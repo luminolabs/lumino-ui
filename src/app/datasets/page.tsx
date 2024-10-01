@@ -43,8 +43,10 @@ export default function DatasetsPage() {
 
   return (
     <Box p={4} bg="#F2F2F2" minH="calc(100vh - 64px)">
-      <Flex mb={6} direction={isMobile ? "column" : "row"} justify="space-between" align={isMobile ? "stretch" : "center"}>
+      <Flex mb={6} direction={isMobile ? "column" : "row"}>
+      <Box width={isMobile ? "100%" : "35%"} bg="tranparent" mb={isMobile ? 4 : 0} mr={isMobile ? 0 : 6}>
         <Heading size="lg" color="#261641" mb={isMobile ? 4 : 0}>Datasets</Heading>
+      </Box>
         <Button 
           leftIcon={<IconWrapper> <PlusCircleIcon /></IconWrapper>}
           color="white"
