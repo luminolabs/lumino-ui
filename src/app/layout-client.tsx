@@ -41,7 +41,7 @@ export default function LayoutClient({
     return (
         <ErrorBoundary FallbackComponent={ErrorFallback}>
             <AuthProvider>
-                <Suspense fallback={<div>Loading...</div>}>
+                <Suspense fallback={<Center height="100vh"><Spinner size="xl" color="purple.500" /></Center>}>
                     <ChakraProvider theme={theme}>
                         <AppContent>{children}</AppContent>
                     </ChakraProvider>

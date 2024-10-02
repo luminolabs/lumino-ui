@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { VStack, Heading, Text, Spinner, Center } from '@chakra-ui/react';
 import { useAuth } from '@/context/AuthContext';
@@ -8,10 +8,12 @@ import { useAuth } from '@/context/AuthContext';
 export default function Home() {
   const { isLoggedIn, isLoading, checkLoginStatus } = useAuth();
   const router = useRouter();
+  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
 
   useEffect(() => {
     const handleAuth = async () => {
       if (!isLoading) {
+        setIsCheckingAuth(true);
         const loggedIn = await checkLoginStatus();
         if (loggedIn) {
           router.push('/fine-tuning');
@@ -21,22 +23,25 @@ export default function Home() {
           const settings = await response.json();
           window.location.href = `${settings.API_BASE_URL}v1/auth0/login`;
         }
+        setIsCheckingAuth(false);
       }
     };
 
     handleAuth();
   }, [isLoading, checkLoginStatus, router]);
 
-  if (isLoading) {
+  if (isCheckingAuth || isLoading) {
     return (
-      <Center height="calc(100vh - 64px)">
+      <Center height="100vh">
         <Spinner size="xl" color="purple.500" />
       </Center>
     );
   }
 
+  // This part will likely never be rendered due to the immediate redirect,
+  // but we'll keep it as a fallback
   return (
-    <VStack spacing={4} align="center" justify="center" minHeight="calc(100vh - 64px - 56px)">
+    <VStack spacing={4} align="center" justify="center" height="100vh">
       <Heading color="purple.700" as="h1" size="xl" fontWeight="bold">
         Welcome to Lumino Dashboard
       </Heading>
