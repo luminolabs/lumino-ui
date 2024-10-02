@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Box, Flex, Spacer, Link, IconButton, Menu, MenuButton, MenuList, MenuItem, useToast } from '@chakra-ui/react';
+import { Box, Flex, Link, IconButton, Menu, MenuButton, MenuList, MenuItem, useToast } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import Image from 'next/image';
 import { useAuth } from '@/context/AuthContext';
@@ -29,10 +29,11 @@ const Header = () => {
 
   return (
     <Box as="header" bg="#F2F2F2" boxShadow="sm" py={4} px={8}>
-      <Flex maxW="container.xl" alignItems="center">
+      <Flex maxW="inherit" alignItems="center" justifyContent="space-between">
+        {/* Left Side: Logo */}
         <NextLink href="/" passHref>
-          <Flex as="a" marginLeft="2.5" alignItems="center">
-            <Box position="absolute" width="128px" height="48px">
+          <Flex as="a" alignItems="center">
+            <Box position="relative" width="128px" height="48px">
               <Image
                 src="/logo.svg"
                 alt="Lumino Logo"
@@ -42,8 +43,9 @@ const Header = () => {
             </Box>
           </Flex>
         </NextLink>
-        <Spacer />
-        <Flex gap={6} alignItems="center">
+
+        {/* Right Side: Navigation Links */}
+        <Flex alignItems="center" gap={6} ml="auto">
           <Link _hover={{ color: '#4E00A6' }} color={pathname.split("/")[1] === "fine-tuning" ? "#4E00A6" : "gray.600"} as={NextLink} href="/fine-tuning">
             Dashboard
           </Link>
