@@ -9,6 +9,7 @@ interface Dataset {
   id: string;
   created_at: string;
   name: string;
+  status: string;
 }
 
 interface DatasetListContentProps {
@@ -49,17 +50,21 @@ const DatasetListContent: React.FC<DatasetListContentProps> = ({
       const response = await fetchWithAuth(
         `/datasets?page=${pageToLoad}&per_page=${ITEMS_PER_PAGE}`
       );
-      const newDatasets = response.data;
-      if (pageToLoad === 1) {
-        setDatasets(newDatasets);
-      } else {
-        setDatasets((prevDatasets) => [...prevDatasets, ...newDatasets]);
-      }
-      setHasMore(newDatasets.length === ITEMS_PER_PAGE);
+      const allDatasets = response.data;
+      const filteredDatasets = allDatasets.filter((dataset: Dataset) =>
+        dataset.status.toLowerCase() === "uploaded" || dataset.status.toLowerCase() === "validated"
+      );
 
-      if (pageToLoad === 1 && newDatasets.length > 0 && !selectedDatasetName) {
-        onFirstDatasetLoad(newDatasets[0].name);
-        router.push(`/datasets/${newDatasets[0].name}`);
+      if (pageToLoad === 1) {
+        setDatasets(filteredDatasets);
+      } else {
+        setDatasets((prevDatasets) => [...prevDatasets, ...filteredDatasets]);
+      }
+      setHasMore(filteredDatasets.length === ITEMS_PER_PAGE);
+
+      if (pageToLoad === 1 && filteredDatasets.length > 0 && !selectedDatasetName) {
+        onFirstDatasetLoad(filteredDatasets[0].name);
+        router.push(`/datasets/${filteredDatasets[0].name}`);
       }
     } catch (error) {
       console.error("Error fetching datasets:", error);
@@ -100,6 +105,7 @@ const DatasetListContent: React.FC<DatasetListContentProps> = ({
             >
               <Text fontWeight="medium" color="#261641">{dataset.name}</Text>
               <Text fontSize="sm" color="gray.500">{new Date(dataset.created_at).toLocaleString()}</Text>
+              <Text fontSize="xs" color="gray.400">Status: {dataset.status}</Text>
             </Box>
           </Link>
         ))}
