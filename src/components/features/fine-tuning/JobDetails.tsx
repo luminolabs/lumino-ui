@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack, Link } from '@chakra-ui/react';
-import { DownloadIcon } from '@chakra-ui/icons';
+import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack, Link, HStack } from '@chakra-ui/react';
+import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
 import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, HomeIcon, HomeModernIcon, IdentificationIcon, LightBulbIcon, PuzzlePieceIcon, ServerIcon, ServerStackIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 
@@ -40,6 +40,7 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
   const [artifacts, setArtifacts] = useState<Artifacts | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isArtifactsLoading, setIsArtifactsLoading] = useState(true);
+  const [copiedStates, setCopiedStates] = useState<{ [key: string]: boolean }>({});
   const toast = useToast();
 
   useEffect(() => {
@@ -67,11 +68,11 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
       if (!jobName) return;
       try {
         setIsArtifactsLoading(true);
-        const data = await fetchWithAuth(`/models/fine-tuned/${jobName}_model`);
+        const data = await fetchWithAuth(`/models/fine-tuned/${jobName}`);
         setArtifacts(data.artifacts);
       } catch (error) {
         console.error('Error fetching artifacts:', error);
-        if (jobDetails?.status.toLocaleLowerCase() === "completed") {
+        if (jobDetails?.status.toLowerCase() === "completed") {
           toast({
             title: 'Error fetching artifacts',
             description: 'Unable to load downloadable files.',
@@ -89,8 +90,27 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     fetchArtifacts();
   }, [jobName, toast]);
 
-  const handleDownload = (url: string) => {
-    window.open(url, '_blank');
+  const copyToClipboard = (text: string, key: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+      setCopiedStates({ ...copiedStates, [key]: true });
+      setTimeout(() => {
+        setCopiedStates({ ...copiedStates, [key]: false });
+      }, 2000);
+    }).catch(err => {
+      console.error('Failed to copy: ', err);
+    });
+  };
+
+  const generateCurlCommand = (url: string) => {
+    return `curl -O ${url}`;
+  };
+
+  const generateAllWeightsCurlCommand = () => {
+    if (!artifacts) return '';
+    const commands = artifacts.weight_files.map(file => 
+      generateCurlCommand(`${artifacts.base_url}/${file}`)
+    );
+    return commands.join(' && ');
   };
 
   const DetailItem = ({ icon, label, value, color = "gray.600" }: { icon: React.ElementType; label: string; value: string | number; color?: string }) => (
@@ -130,36 +150,40 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
 
     if (!artifacts || (!artifacts.weight_files.length && !artifacts.other_files.length)) {
       return (
-        <Button
-          leftIcon={<DownloadIcon />}
-          color="white"
-          bg="#4e00a6"
-          _hover={{ bg: "#0005A6" }}
-          isDisabled={true}
-          width="100%"
-        >
-          Download
-        </Button>
+        <Text color="gray.500">No downloadable files available.</Text>
       );
     }
 
-    const allFiles = [...artifacts.weight_files, ...artifacts.other_files];
-
     return (
       <VStack alignItems="flex-start">
-        {allFiles.map((file) => (
-          <Link
-            key={file}
-            color="#4e00a6"
-            onClick={() => handleDownload(`${artifacts!.base_url}/${file}`)}
-            size="sm"
-            height="auto"
-            whiteSpace="normal"
-            py={2}
-          >
-            {file}
-          </Link>
+        {artifacts.weight_files.map((file) => (
+          <HStack key={file} width="50%">
+            <Link
+              color="#4e00a6"
+              href={`${artifacts.base_url}/${file}`}
+              isExternal
+              flex="1"
+            >
+              {file}
+            </Link>
+            <Button
+              size="sm"
+              onClick={() => copyToClipboard(generateCurlCommand(`${artifacts.base_url}/${file}`), file)}
+              leftIcon={copiedStates[file] ? <CheckIcon /> : <CopyIcon />}
+              colorScheme="purple"
+            >
+              {copiedStates[file] ? 'Copied!' : 'Copy curl'}
+            </Button>
+          </HStack>
         ))}
+        <Button
+          mt={4}
+          onClick={() => copyToClipboard(generateAllWeightsCurlCommand(), 'all')}
+          leftIcon={copiedStates['all'] ? <CheckIcon /> : <CopyIcon />}
+          colorScheme="purple"
+        >
+          {copiedStates['all'] ? 'Copied!' : 'Copy curl for all Weights'}
+        </Button>
       </VStack>
     );
   };
@@ -183,24 +207,12 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
         {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
         {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
       </SimpleGrid>
-      {isDownloadable ? (
+      {isDownloadable && (
         <Box mt={4}>
           <Text fontWeight="bold" mb={2}>Downloads</Text>
           {renderDownloadButtons()}
         </Box>
-      ) : <Box mt={4}>
-        <Text fontWeight="bold" mb={2}>Downloads</Text>
-        <Button
-          leftIcon={<DownloadIcon />}
-          color="white"
-          bg="#4e00a6"
-          _hover={{ bg: "#0005A6" }}
-          isDisabled={true}
-          width="20%"
-        >
-          Download
-        </Button>
-      </Box>}
+      )}
     </Box>
   );
 };
