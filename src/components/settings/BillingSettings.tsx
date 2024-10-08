@@ -51,7 +51,7 @@ const BillingSettings = () => {
   }, []);
 
   const handleAddCredits = async () => {
-    const redirectUrl = `/api/proxy/v1/billing/credits-add?amount_dollars=${amount}`;
+    const redirectUrl = `/api/proxy/v1/billing/stripe-credits-add?amount_dollars=${amount}`;
     try {
       const response = await fetch(redirectUrl, {
         method: 'GET',
@@ -81,7 +81,7 @@ const BillingSettings = () => {
     }
   };
   const handleAddUpdatePayment = async () => {
-    const redirectUrl = `/api/proxy/v1/billing/payment-method-add`;
+    const redirectUrl = `/api/proxy/v1/billing/stripe-payment-method-add`;
     try {
       const response = await fetch(redirectUrl, {
         method: 'GET',
