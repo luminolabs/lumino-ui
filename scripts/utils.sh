@@ -7,6 +7,7 @@ ARTIFACT_REPO_URL="us-central1-docker.pkg.dev/neat-airport-407301/lum-docker-ima
 WORK_ZONE="us-central1-a"
 BUILD_VM="scheduler-zen"
 SERVICE_NAME="lumino-dashboard"
+BUILD_DURATION=300  # 5 minutes
 
 # Exit on errors
 set -e
