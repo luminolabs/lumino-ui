@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Box, Text, Spinner, useToast, SimpleGrid, Flex, Icon, Button, VStack, Link, HStack } from '@chakra-ui/react';
 import { CopyIcon, CheckIcon } from '@chakra-ui/icons';
 import { fetchWithAuth } from '@/utils/api';
-import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowsRightLeftIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, HomeIcon, HomeModernIcon, IdentificationIcon, LightBulbIcon, PuzzlePieceIcon, ServerIcon, ServerStackIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
+import { ArrowPathIcon, ArrowPathRoundedSquareIcon, ArrowRightCircleIcon, ArrowsRightLeftIcon, BeakerIcon, CalendarIcon, ChartBarIcon, CheckCircleIcon, CircleStackIcon, ClockIcon, CpuChipIcon, CubeIcon, CubeTransparentIcon, ForwardIcon, HashtagIcon, HomeIcon, HomeModernIcon, IdentificationIcon, LightBulbIcon, PuzzlePieceIcon, ServerIcon, ServerStackIcon, ViewColumnsIcon } from '@heroicons/react/24/outline';
 
 interface JobDetail {
   id: string;
@@ -22,6 +22,15 @@ interface JobDetail {
     num_epochs: number;
     lr: string;
     seed: number;
+  }
+  timestamps: {
+    new: Date;
+    queued: Date;
+    running: Date;
+    stopping: Date;
+    stopped: Date;
+    completed: Date;
+    failed: Date;
   }
   type: string;
   status: string;
@@ -107,7 +116,7 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
 
   const generateAllWeightsCurlCommand = () => {
     if (!artifacts) return '';
-    const commands = artifacts.weight_files.map(file => 
+    const commands = artifacts.weight_files.map(file =>
       generateCurlCommand(`${artifacts.base_url}/${file}`)
     );
     return commands.join(' && ');
@@ -188,33 +197,43 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
     );
   };
 
-  return (
-    <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
-      <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-        <DetailItem icon={IdentificationIcon} label="Name" value={jobDetails.name} />
-        <DetailItem icon={CheckCircleIcon} label="Status" value={jobDetails.status} color={getStatusColor(jobDetails.status)} />
-        <DetailItem icon={HomeIcon} label="Base Model" value={jobDetails.base_model_name} />
-        <DetailItem icon={HomeModernIcon} label="Output Model" value={jobDetails.base_model_name + "_" + jobDetails.id} />
-        <DetailItem icon={ClockIcon} label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
-        <DetailItem icon={CircleStackIcon} label="Dataset Name" value={jobDetails.dataset_name} />
-        <DetailItem icon={HashtagIcon} label="Number of Tokens" value={jobDetails.num_tokens?.toLocaleString() || 'N/A'} />
-        <DetailItem icon={ArrowPathIcon} label="Number of Epochs" value={jobDetails.parameters.num_epochs} />
-        <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
-        <DetailItem icon={ServerStackIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
-        <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.type} />
-        <DetailItem icon={LightBulbIcon} label="Learning Rate" value={jobDetails.parameters.lr} />
-        <DetailItem icon={PuzzlePieceIcon} label="Seed" value={jobDetails.parameters.seed} />
-        {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
-        {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
-      </SimpleGrid>
-      {isDownloadable && (
-        <Box mt={4}>
-          <Text fontWeight="bold" mb={2}>Downloads</Text>
-          {renderDownloadButtons()}
-        </Box>
-      )}
-    </Box>
-  );
+  const getRuntime = (jobDetails: any) => {
+    let timeStamp = ""
+    timeStamp = jobDetails.status.toLowerCase() === "running" ? (new Date().getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "completed" ? (jobDetails.timestamps.completed.getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "stopped"
+   ? (jobDetails.timestamps.stopped.getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "failed" ? (jobDetails.timestamps.failed.getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : "Job hasn't started yet"
+
+  return timeStamp;
+}
+
+return (
+  <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
+    <SimpleGrid columns={[1, 2, 3]} spacing={4}>
+      <DetailItem icon={IdentificationIcon} label="Name" value={jobDetails.name} />
+      <DetailItem icon={CheckCircleIcon} label="Status" value={jobDetails.status} color={getStatusColor(jobDetails.status)} />
+      <DetailItem icon={HomeIcon} label="Base Model" value={jobDetails.base_model_name} />
+      <DetailItem icon={HomeModernIcon} label="Output Model" value={jobDetails.base_model_name + "_" + jobDetails.id} />
+      <DetailItem icon={ClockIcon} label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
+      <DetailItem icon={CircleStackIcon} label="Dataset Name" value={jobDetails.dataset_name} />
+      <DetailItem icon={HashtagIcon} label="Number of Tokens" value={jobDetails.num_tokens?.toLocaleString() || 'N/A'} />
+      <DetailItem icon={ArrowPathIcon} label="Current Epoch / Total Epochs" value={`${jobDetails.current_epoch} / ${jobDetails.total_epochs}`} />
+      <DetailItem icon={ArrowRightCircleIcon} label="Current Step / Total Steps" value={`${jobDetails.current_step} / ${jobDetails.total_steps}`} />
+      <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
+      <DetailItem icon={ServerStackIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
+      <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.type} />
+      <DetailItem icon={LightBulbIcon} label="Learning Rate" value={jobDetails.parameters.lr} />
+      <DetailItem icon={PuzzlePieceIcon} label="Seed" value={jobDetails.parameters.seed} />
+      <DetailItem icon={BeakerIcon} label="Runtime" value={getRuntime(jobDetails)} />
+      {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
+      {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
+    </SimpleGrid>
+    {isDownloadable && (
+      <Box mt={4}>
+        <Text fontWeight="bold" mb={2}>Downloads</Text>
+        {renderDownloadButtons()}
+      </Box>
+    )}
+  </Box>
+);
 };
 
 export default JobDetails;
