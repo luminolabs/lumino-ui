@@ -208,21 +208,21 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
 return (
   <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
     <SimpleGrid columns={[1, 2, 3]} spacing={4}>
-      <DetailItem icon={IdentificationIcon} label="Name" value={jobDetails.name} />
-      <DetailItem icon={CheckCircleIcon} label="Status" value={jobDetails.status} color={getStatusColor(jobDetails.status)} />
-      <DetailItem icon={HomeIcon} label="Base Model" value={jobDetails.base_model_name} />
-      <DetailItem icon={HomeModernIcon} label="Output Model" value={jobDetails.base_model_name + "_" + jobDetails.id} />
-      <DetailItem icon={ClockIcon} label="Created At" value={new Date(jobDetails.created_at).toLocaleString()} />
-      <DetailItem icon={CircleStackIcon} label="Dataset Name" value={jobDetails.dataset_name} />
-      <DetailItem icon={HashtagIcon} label="Number of Tokens" value={jobDetails.num_tokens?.toLocaleString() || 'N/A'} />
-      <DetailItem icon={ArrowPathIcon} label="Current Epoch / Total Epochs" value={`${jobDetails.current_epoch} / ${jobDetails.total_epochs}`} />
-      <DetailItem icon={ArrowRightCircleIcon} label="Current Step / Total Steps" value={`${jobDetails.current_step} / ${jobDetails.total_steps}`} />
-      <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails.parameters.shuffle.toString()} />
-      <DetailItem icon={ServerStackIcon} label="Batch Size" value={jobDetails.parameters.batch_size} />
-      <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.type} />
-      <DetailItem icon={LightBulbIcon} label="Learning Rate" value={jobDetails.parameters.lr} />
-      <DetailItem icon={PuzzlePieceIcon} label="Seed" value={jobDetails.parameters.seed} />
-      <DetailItem icon={BeakerIcon} label="Runtime" value={getRuntime(jobDetails) ? getRuntime(jobDetails) : "Job doesn't have timestamps" } />
+      <DetailItem icon={IdentificationIcon} label="Name" value={jobDetails?.name} />
+      <DetailItem icon={CheckCircleIcon} label="Status" value={jobDetails?.status} color={getStatusColor(jobDetails?.status)} />
+      <DetailItem icon={HomeIcon} label="Base Model" value={jobDetails?.base_model_name} />
+      <DetailItem icon={HomeModernIcon} label="Output Model" value={jobDetails?.base_model_name + "_" + jobDetails?.id} />
+      <DetailItem icon={ClockIcon} label="Created At" value={new Date(jobDetails?.created_at).toLocaleString()} />
+      <DetailItem icon={CircleStackIcon} label="Dataset Name" value={jobDetails?.dataset_name} />
+      <DetailItem icon={HashtagIcon} label="Number of Tokens" value={jobDetails?.num_tokens?.toLocaleString() || 'N/A'} />
+      <DetailItem icon={ArrowPathIcon} label="Current Epoch / Total Epochs" value={`${jobDetails?.current_epoch} / ${jobDetails?.total_epochs}`} />
+      <DetailItem icon={ArrowRightCircleIcon} label="Current Step / Total Steps" value={`${jobDetails?.current_step} / ${jobDetails?.total_steps}`} />
+      <DetailItem icon={ArrowsRightLeftIcon} label="Shuffle" value={jobDetails?.parameters?.shuffle.toString()} />
+      <DetailItem icon={ServerStackIcon} label="Batch Size" value={jobDetails?.parameters?.batch_size} />
+      <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails?.type} />
+      <DetailItem icon={LightBulbIcon} label="Learning Rate" value={jobDetails?.parameters?.lr} />
+      <DetailItem icon={PuzzlePieceIcon} label="Seed" value={jobDetails?.parameters?.seed} />
+      <DetailItem icon={BeakerIcon} label="Runtime" value={getRuntime(jobDetails) !== null ? getRuntime(jobDetails) : "Job doesn't have timestamps" } />
       {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
       {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
     </SimpleGrid>
