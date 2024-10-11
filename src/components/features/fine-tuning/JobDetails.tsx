@@ -199,8 +199,8 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
 
   const getRuntime = (jobDetails: any) => {
     let timeStamp = ""
-    timeStamp = jobDetails.status.toLowerCase() === "running" ? (new Date().getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "completed" ? (jobDetails.timestamps?.completed.getTime() - jobDetails.timestamps?.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "stopped"
-   ? (jobDetails.timestamps?.stopped.getTime() - jobDetails.timestamps?.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "failed" ? (jobDetails.timestamps?.failed.getTime() - jobDetails.timestamps?.running.getTime()).toLocaleString() : "Job hasn't started yet"
+    timeStamp = jobDetails.status.toLowerCase() === "running" ? (new Date().getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "completed" ? (jobDetails.timestamps?.completed?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "stopped"
+   ? (jobDetails.timestamps?.stopped?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "failed" ? (jobDetails.timestamps?.failed?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : "Job hasn't started yet"
 
   return timeStamp;
 }
