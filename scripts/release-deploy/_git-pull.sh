@@ -11,5 +11,5 @@ cd /$SERVICE_NAME
 
 echo "Pulling the latest code from the git repository..."
 git config --global --add safe.directory /$SERVICE_NAME
-ssh-agent bash -c "ssh-add ~/.ssh/id_rsa; git pull"
+ssh-agent bash -c "ssh-add ~/.ssh/id_rsa; git -c core.sshCommand='ssh -o StrictHostKeyChecking=no' pull"
 echo "Done."
