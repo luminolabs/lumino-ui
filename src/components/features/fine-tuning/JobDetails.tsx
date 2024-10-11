@@ -199,8 +199,8 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
 
   const getRuntime = (jobDetails: any) => {
     let timeStamp = ""
-    timeStamp = jobDetails.status.toLowerCase() === "running" ? (new Date().getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "completed" ? (jobDetails.timestamps.completed.getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "stopped"
-   ? (jobDetails.timestamps.stopped.getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "failed" ? (jobDetails.timestamps.failed.getTime() - jobDetails.timestamps.running.getTime()).toLocaleString() : "Job hasn't started yet"
+    timeStamp = jobDetails.status.toLowerCase() === "running" ? (new Date().getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "completed" ? (jobDetails.timestamps?.completed.getTime() - jobDetails.timestamps?.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "stopped"
+   ? (jobDetails.timestamps?.stopped.getTime() - jobDetails.timestamps?.running.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "failed" ? (jobDetails.timestamps?.failed.getTime() - jobDetails.timestamps?.running.getTime()).toLocaleString() : "Job hasn't started yet"
 
   return timeStamp;
 }
@@ -222,7 +222,7 @@ return (
       <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.type} />
       <DetailItem icon={LightBulbIcon} label="Learning Rate" value={jobDetails.parameters.lr} />
       <DetailItem icon={PuzzlePieceIcon} label="Seed" value={jobDetails.parameters.seed} />
-      <DetailItem icon={BeakerIcon} label="Runtime" value={getRuntime(jobDetails)} />
+      <DetailItem icon={BeakerIcon} label="Runtime" value={getRuntime(jobDetails) ? getRuntime(jobDetails) : "Job doesn't have timestamps" } />
       {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
       {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
     </SimpleGrid>
