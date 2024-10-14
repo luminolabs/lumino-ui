@@ -198,14 +198,26 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
   };
 
   const getRuntime = (jobDetails: any) => {
-    let timeStamp = ""
+    let timeStamp = "";
+
     if (jobDetails.timestamps) {
-      timeStamp = jobDetails.status.toLowerCase() === "running" ? (new Date().getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "completed" ? (jobDetails.timestamps?.completed?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "stopped"
-     ? (jobDetails.timestamps?.stopped?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "failed" ? (jobDetails.timestamps?.failed?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : "Job hasn't started yet"
+      const status = jobDetails.status.toLowerCase();
+
+      if (status === "running" && jobDetails.timestamps?.running) {
+        timeStamp = (new Date().getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
+      } else if (status === "completed" && jobDetails.timestamps?.completed && jobDetails.timestamps?.running) {
+        timeStamp = (new Date(jobDetails.timestamps.completed).getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
+      } else if (status === "stopped" && jobDetails.timestamps?.stopped && jobDetails.timestamps?.running) {
+        timeStamp = (new Date(jobDetails.timestamps.stopped).getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
+      } else if (status === "failed" && jobDetails.timestamps?.failed && jobDetails.timestamps?.running) {
+        timeStamp = (new Date(jobDetails.timestamps.failed).getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
+      } else {
+        timeStamp = "Job hasn't started yet";
+      }
     }
 
-  return timeStamp;
-}
+    return timeStamp;
+  };
 
 return (
   <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
@@ -224,8 +236,11 @@ return (
       <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails?.type} />
       <DetailItem icon={LightBulbIcon} label="Learning Rate" value={jobDetails?.parameters?.lr} />
       <DetailItem icon={PuzzlePieceIcon} label="Seed" value={jobDetails?.parameters?.seed} />
-      <DetailItem icon={BeakerIcon} label="Runtime" value={jobDetails?.timestamps === null ? getRuntime(jobDetails) : "Job doesn't have timestamps" } />
-      {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
+      <DetailItem
+          icon={BeakerIcon}
+          label="Runtime"
+          value={jobDetails?.timestamps && jobDetails.timestamps.running ? getRuntime(jobDetails) : "Job doesn't have timestamps"}
+      />      {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
       {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
     </SimpleGrid>
     {isDownloadable && (
