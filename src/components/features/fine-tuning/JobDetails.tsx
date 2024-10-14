@@ -198,7 +198,7 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
   };
 
   const getRuntime = (jobDetails: any) => {
-    let timeStamp = "";
+    let timeStamp = "Job hasn't started yet"; // Default message if running hasn't started
 
     if (jobDetails.timestamps && jobDetails.timestamps.running) {
       const runningTime = new Date(jobDetails.timestamps.running).getTime();
@@ -216,8 +216,6 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
       } else if (status === "FAILED" && jobDetails.timestamps.failed) {
         const failedTime = new Date(jobDetails.timestamps.failed).getTime();
         timeStamp = (failedTime - runningTime).toLocaleString();
-      } else {
-        timeStamp = "Job hasn't started yet";
       }
     }
 
