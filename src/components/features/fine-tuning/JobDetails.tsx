@@ -198,14 +198,29 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
   };
 
   const getRuntime = (jobDetails: any) => {
-    let timeStamp = ""
-    if (jobDetails.timestamps) {
-      timeStamp = jobDetails.status.toLowerCase() === "running" ? (new Date().getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "completed" ? (jobDetails.timestamps?.completed?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "stopped"
-     ? (jobDetails.timestamps?.stopped?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : jobDetails.status.toLowerCase() === "failed" ? (jobDetails.timestamps?.failed?.getTime() - jobDetails.timestamps?.running?.getTime()).toLocaleString() : "Job hasn't started yet"
+    let timeStamp = "Job hasn't started yet"; // Default message if running hasn't started
+
+    if (jobDetails.timestamps && jobDetails.timestamps.running) {
+      const runningTime = new Date(jobDetails.timestamps.running).getTime();
+
+      const status = jobDetails.status;
+
+      if (status === "RUNNING") {
+        timeStamp = (new Date().getTime() - runningTime).toLocaleString();
+      } else if (status === "COMPLETED" && jobDetails.timestamps.completed) {
+        const completedTime = new Date(jobDetails.timestamps.completed).getTime();
+        timeStamp = (completedTime - runningTime).toLocaleString();
+      } else if (status === "STOPPED" && jobDetails.timestamps.stopped) {
+        const stoppedTime = new Date(jobDetails.timestamps.stopped).getTime();
+        timeStamp = (stoppedTime - runningTime).toLocaleString();
+      } else if (status === "FAILED" && jobDetails.timestamps.failed) {
+        const failedTime = new Date(jobDetails.timestamps.failed).getTime();
+        timeStamp = (failedTime - runningTime).toLocaleString();
+      }
     }
 
-  return timeStamp;
-}
+    return timeStamp;
+  };
 
 return (
   <Box bg="white" borderRadius="lg" boxShadow="sm" p={4}>
@@ -224,9 +239,11 @@ return (
       <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails?.type} />
       <DetailItem icon={LightBulbIcon} label="Learning Rate" value={jobDetails?.parameters?.lr} />
       <DetailItem icon={PuzzlePieceIcon} label="Seed" value={jobDetails?.parameters?.seed} />
-      <DetailItem icon={BeakerIcon} label="Runtime" value={jobDetails?.timestamps === null ? getRuntime(jobDetails) : "Job doesn't have timestamps" } />
-      {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
-      {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
+      <DetailItem
+          icon={BeakerIcon}
+          label="Runtime"
+          value={jobDetails?.timestamps && jobDetails.timestamps.running ? getRuntime(jobDetails) : "Job doesn't have timestamps"}
+      />
     </SimpleGrid>
     {isDownloadable && (
       <Box mt={4}>
