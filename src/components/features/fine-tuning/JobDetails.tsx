@@ -198,28 +198,35 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
   };
 
   const getRuntime = (jobDetails: any) => {
-    let timeStamp = "Job hasn't started yet"; // Default message if running hasn't started
-
+    let timeStamp;
+    const def = "Job hasn't started yet";
+    debugger
+    if (jobDetails.status == "NEW" || jobDetails.status.toLowerCase() == "QUEUED") {
+      return def;
+    }   
     if (jobDetails.timestamps && jobDetails.timestamps.running) {
       const runningTime = new Date(jobDetails.timestamps.running).getTime();
-
       const status = jobDetails.status;
 
       if (status === "RUNNING") {
-        timeStamp = (new Date().getTime() - runningTime).toLocaleString();
+        timeStamp = (new Date().getTime() - runningTime);
       } else if (status === "COMPLETED" && jobDetails.timestamps.completed) {
         const completedTime = new Date(jobDetails.timestamps.completed).getTime();
-        timeStamp = (completedTime - runningTime).toLocaleString();
+        timeStamp = (completedTime - runningTime);
       } else if (status === "STOPPED" && jobDetails.timestamps.stopped) {
         const stoppedTime = new Date(jobDetails.timestamps.stopped).getTime();
-        timeStamp = (stoppedTime - runningTime).toLocaleString();
+        timeStamp = (stoppedTime - runningTime);
       } else if (status === "FAILED" && jobDetails.timestamps.failed) {
         const failedTime = new Date(jobDetails.timestamps.failed).getTime();
-        timeStamp = (failedTime - runningTime).toLocaleString();
+        timeStamp = (failedTime - runningTime);
       }
     }
 
-    return timeStamp;
+    let hours = Math.floor((Number(timeStamp)/1000)/3600)
+    let minutes = Math.floor(((Number(timeStamp)/1000)%3600)/60)
+    let seconds = Math.floor(((Number(timeStamp)/1000)%3600)%60)
+
+  return `${hours}h ${minutes}m ${seconds}s`;
   };
 
 return (
