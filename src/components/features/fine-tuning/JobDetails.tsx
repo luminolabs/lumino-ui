@@ -200,17 +200,22 @@ const JobDetails = ({ jobName }: { jobName: string }) => {
   const getRuntime = (jobDetails: any) => {
     let timeStamp = "";
 
-    if (jobDetails.timestamps) {
-      const status = jobDetails.status.toLowerCase();
+    if (jobDetails.timestamps && jobDetails.timestamps.running) {
+      const runningTime = new Date(jobDetails.timestamps.running).getTime();
 
-      if (status === "running" && jobDetails.timestamps?.running) {
-        timeStamp = (new Date().getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
-      } else if (status === "completed" && jobDetails.timestamps?.completed && jobDetails.timestamps?.running) {
-        timeStamp = (new Date(jobDetails.timestamps.completed).getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
-      } else if (status === "stopped" && jobDetails.timestamps?.stopped && jobDetails.timestamps?.running) {
-        timeStamp = (new Date(jobDetails.timestamps.stopped).getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
-      } else if (status === "failed" && jobDetails.timestamps?.failed && jobDetails.timestamps?.running) {
-        timeStamp = (new Date(jobDetails.timestamps.failed).getTime() - new Date(jobDetails.timestamps.running).getTime()).toLocaleString();
+      const status = jobDetails.status;
+
+      if (status === "RUNNING") {
+        timeStamp = (new Date().getTime() - runningTime).toLocaleString();
+      } else if (status === "COMPLETED" && jobDetails.timestamps.completed) {
+        const completedTime = new Date(jobDetails.timestamps.completed).getTime();
+        timeStamp = (completedTime - runningTime).toLocaleString();
+      } else if (status === "STOPPED" && jobDetails.timestamps.stopped) {
+        const stoppedTime = new Date(jobDetails.timestamps.stopped).getTime();
+        timeStamp = (stoppedTime - runningTime).toLocaleString();
+      } else if (status === "FAILED" && jobDetails.timestamps.failed) {
+        const failedTime = new Date(jobDetails.timestamps.failed).getTime();
+        timeStamp = (failedTime - runningTime).toLocaleString();
       } else {
         timeStamp = "Job hasn't started yet";
       }
@@ -240,8 +245,7 @@ return (
           icon={BeakerIcon}
           label="Runtime"
           value={jobDetails?.timestamps && jobDetails.timestamps.running ? getRuntime(jobDetails) : "Job doesn't have timestamps"}
-      />      {/* <DetailItem icon={CubeTransparentIcon} label="Type of Fine-Tuning" value={jobDetails.parameters.use_qlora.toString() === 'true' ? "qLoRA" : jobDetails.parameters.use_lora.toString() === 'true' ? "LoRA" : "Full"} /> */}
-      {/* <DetailItem icon={CubeIcon} label="Use qlora" value={jobDetails.parameters.use_qlora.toString()} /> */}
+      />
     </SimpleGrid>
     {isDownloadable && (
       <Box mt={4}>
