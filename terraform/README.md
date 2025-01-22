@@ -53,7 +53,7 @@ terraform/
 
 ### IAM & Permissions
 - Defined in `permissions.tf`
-- Custom service account for API service
+- Custom service account for UI service
 - IAM roles:
    - Logging and monitoring
    - Secret access

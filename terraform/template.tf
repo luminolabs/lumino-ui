@@ -4,7 +4,7 @@ resource "google_compute_instance_template" "lumino_ui" {
   name         = "lumino-ui-${local.version}-tpl"
 
   disk {
-    source_image = "projects/${var.resources_project_id}/global/images/lumino-ui-image"
+    source_image = "${var.region}-docker.pkg.dev/${var.resources_project_id}/lum-docker-images/lumino-dashboard:latest"
     auto_delete  = true
     boot         = true
     device_name  = "lumino-ui-disk"
