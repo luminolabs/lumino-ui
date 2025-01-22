@@ -8,13 +8,17 @@ The infrastructure is designed to support UI with high availability and security
 
 ```
 terraform/
+├── config-example.env      # Example application configuration variables template
 ├── dev.tfvars              # Terraform variables for dev environment
+├── dev-config.env          # Application configuration variables for dev environment (not version controlled)
 ├── lb.tf                   # Load balancer configuration
 ├── main.tf                 # Main Terraform configuration file
 ├── mig.tf                  # Managed Instance Group configuration
 ├── permissions.tf          # IAM permissions and roles configuration
 ├── README.md               # Documentation for Terraform configuration
 ├── secrets.tf              # Secret Manager configuration
+├── secrets.tfvars          # Terraform secrets variables (not version controlled)
+├── secrets-example.tfvars  # Example Terraform secrets variables template
 ├── template.tf             # Instance template configuration
 └── variables.tf            # Variable definitions
 ```
@@ -67,7 +71,17 @@ terraform/
 - Environment-specific resource naming
 - Consistent environment variable prefixes
 
-### 2. Rolling Deployments
+### 2. Secret Management
+Two-tiered approach:
+1. Terraform Secrets (`secrets.tfvars`)
+   - Database passwords
+   - Other infrastructure secrets
+2. Application Secrets (Secret Manager)
+   - Auth0 credentials
+   - API keys
+   - Database connection info
+
+### 3. Rolling Deployments
 - Zero-downtime updates using MIG
 - Version tracking via VERSION file
 - Automatic template versioning
@@ -80,10 +94,13 @@ terraform/
 2. GCP project access and credentials
 3. Required files:
    - `{env}-config.env` with application configuration
+   - `secrets.tfvars` with infrastructure secrets
    - Environment tfvars file (e.g., `dev.tfvars`)
 
 ### Configuration Steps
-1. Set required variables in `{env}-config.env` file
+1. Copy `config-example.env` to `{env}-config.env`
+2. Copy `secrets-example.tfvars` to `secrets.tfvars`
+3. Set required variables in both files
 
 ### Commands
 ```bash
@@ -91,10 +108,10 @@ terraform/
 tofu init
 
 # Plan changes
-tofu plan -var-file="{env}.tfvars"
+tofu plan -var-file="{env}.tfvars" -var-file="secrets.tfvars"
 
 # Apply changes
-tofu apply -var-file="{env}.tfvars"
+tofu apply -var-file="{env}.tfvars" -var-file="secrets.tfvars"
 ```
 
 ## Infrastructure Updates
