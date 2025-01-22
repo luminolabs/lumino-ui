@@ -1,25 +1,20 @@
-# Lumino API Infrastructure
+# Lumino UI Infrastructure
 
-This directory contains the Terraform configuration for Lumino API's cloud infrastructure on Google Cloud Platform (GCP). 
+This directory contains the Terraform configuration for Lumino UI's cloud infrastructure on Google Cloud Platform (GCP). 
 
-The infrastructure is designed to support scalable fine-tuning job processing with high availability and security.
+The infrastructure is designed to support UI with high availability and security.
 
 ## Directory Structure
 
 ```
 terraform/
-├── config-example.env      # Example application configuration variables template
-├── db.tf                   # Database configuration
 ├── dev.tfvars              # Terraform variables for dev environment
-├── dev-config.env          # Application configuration variables for dev environment (not version controlled)
 ├── lb.tf                   # Load balancer configuration
 ├── main.tf                 # Main Terraform configuration file
 ├── mig.tf                  # Managed Instance Group configuration
 ├── permissions.tf          # IAM permissions and roles configuration
 ├── README.md               # Documentation for Terraform configuration
 ├── secrets.tf              # Secret Manager configuration
-├── secrets.tfvars          # Terraform secrets variables (not version controlled)
-├── secrets-example.tfvars  # Example Terraform secrets variables template
 ├── template.tf             # Instance template configuration
 └── variables.tf            # Variable definitions
 ```
@@ -45,12 +40,6 @@ terraform/
 - Rolling update policy for zero-downtime deployments
 - Health checks via HTTP endpoint `/v1/health`
 - Instance lifecycle management with automatic repair
-
-### Database
-- Defined in `db.tf`
-- PostgreSQL instance on Cloud SQL
-- User and database configuration
-- Connection management
 
 ### Instance Templates
 - Defined in `template.tf`
@@ -78,17 +67,7 @@ terraform/
 - Environment-specific resource naming
 - Consistent environment variable prefixes
 
-### 2. Secret Management
-Two-tiered approach:
-1. Terraform Secrets (`secrets.tfvars`)
-   - Database passwords
-   - Other infrastructure secrets
-2. Application Secrets (Secret Manager)
-   - Auth0 credentials
-   - API keys
-   - Database connection info
-
-### 3. Rolling Deployments
+### 2. Rolling Deployments
 - Zero-downtime updates using MIG
 - Version tracking via VERSION file
 - Automatic template versioning
@@ -101,13 +80,10 @@ Two-tiered approach:
 2. GCP project access and credentials
 3. Required files:
    - `{env}-config.env` with application configuration
-   - `secrets.tfvars` with infrastructure secrets
    - Environment tfvars file (e.g., `dev.tfvars`)
 
 ### Configuration Steps
-1. Copy `config-example.env` to `{env}-config.env`
-2. Copy `secrets-example.tfvars` to `secrets.tfvars`
-3. Set required variables in both files
+1. Set required variables in `{env}-config.env` file
 
 ### Commands
 ```bash
@@ -115,10 +91,10 @@ Two-tiered approach:
 tofu init
 
 # Plan changes
-tofu plan -var-file="{env}.tfvars" -var-file="secrets.tfvars"
+tofu plan -var-file="{env}.tfvars"
 
 # Apply changes
-tofu apply -var-file="{env}.tfvars" -var-file="secrets.tfvars"
+tofu apply -var-file="{env}.tfvars"
 ```
 
 ## Infrastructure Updates

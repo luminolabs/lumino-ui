@@ -28,7 +28,7 @@ resource "google_compute_instance_template" "lumino_ui" {
 
   metadata = {
     startup-script = "/lumino-dashboard/scripts/mig-runtime/start-services.sh ui"
-    CAPI_ENV = var.environment
+    LUI_ENV = var.environment
   }
 
   scheduling {
@@ -55,16 +55,16 @@ resource "google_compute_instance_template" "lumino_ui" {
   tags = ["lumino-ui-web"]
 }
 
-# resource "google_compute_firewall" "lumino_ui" {
-#   name    = "lumino-api-firewall"
-#   network = "projects/${var.project_id}/global/networks/default"
+resource "google_compute_firewall" "lumino_ui" {
+  name    = "lumino-ui-firewall"
+  network = "projects/${var.project_id}/global/networks/default"
 
-#   allow {
-#     protocol = "tcp"
-#     ports    = [var.ui_internal_port]
-#   }
+  allow {
+    protocol = "tcp"
+    ports    = [var.ui_internal_port]
+  }
 
-#   source_ranges = ["35.191.0.0/16", "130.211.0.0/22", "209.85.152.0/22", "209.85.204.0/22"]
+  source_ranges = ["35.191.0.0/16", "130.211.0.0/22", "209.85.152.0/22", "209.85.204.0/22"]
 
-#   target_tags = ["lumino-api-web"]
-# }
+  target_tags = ["lumino-ui-web"]
+}

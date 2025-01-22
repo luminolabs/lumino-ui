@@ -19,14 +19,6 @@ resource "google_project_iam_member" "lumino_ui_project" {
   member  = "serviceAccount:${google_service_account.lumino_ui.email}"
 }
 
-# resource "google_storage_bucket_iam_member" "pipeline_zen_jobs_results" {
-#   for_each = toset([var.environment, "local"])
-
-#   bucket = "lum-${each.key}-pipeline-zen-datasets"
-#   role   = "roles/storage.objectUser"
-#   member = "serviceAccount:${google_service_account.lumino_api.email}"
-# }
-
 resource "google_artifact_registry_repository_iam_member" "lumino_ui" {
   member     = "serviceAccount:${google_service_account.lumino_ui.email}"
   repository = "lum-docker-images"

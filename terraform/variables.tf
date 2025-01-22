@@ -29,16 +29,5 @@ variable "resources_project_id" {
 variable "ui_internal_port" {
   description = "The internal port for the UI"
   type        = number
-  default     = 5100
+  default     = 3000
 }
-
-# variable "cloud_sql_instance_name" {
-#   description = "The name of the Cloud SQL instance"
-#   type        = string
-#   default     = "zen-db"
-# }
-
-# variable "zen_db_password" {
-#   description = "The password for the Cloud SQL lumino_api user"
-#   type        = string
-# }
