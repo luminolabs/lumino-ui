@@ -8,13 +8,17 @@ The infrastructure is designed to support UI with high availability and security
 
 ```
 terraform/
+├── backend.tf              # Terraform State configuration file
 ├── config-example.env      # Example application configuration variables template
+├── dev-backend.hcl         # Terraform State configuration constants for dev environment (not version controlled)
 ├── dev.tfvars              # Terraform variables for dev environment
 ├── dev-config.env          # Application configuration variables for dev environment (not version controlled)
 ├── lb.tf                   # Load balancer configuration
-├── main.tf                 # Main Terraform configuration file
+├── main.tf                 # Main Terraform infra/resource configuration file
 ├── mig.tf                  # Managed Instance Group configuration
 ├── permissions.tf          # IAM permissions and roles configuration
+├── prod-backend.hcl        # Terraform State configuration constants for prod environment (not version controlled)
+├── prod.tfvars             # Terraform variables for prod environment
 ├── README.md               # Documentation for Terraform configuration
 ├── secrets.tf              # Secret Manager configuration
 ├── secrets.tfvars          # Terraform secrets variables (not version controlled)
@@ -105,7 +109,7 @@ Two-tiered approach:
 ### Commands
 ```bash
 # Initialize Terraform
-tofu init -backend-config=dev-backend.hcl -reconfigure
+tofu init -backend-config={env}-backend.hcl -reconfigure
 
 # Plan changes
 tofu plan -var-file="{env}.tfvars" -var-file="secrets.tfvars"
