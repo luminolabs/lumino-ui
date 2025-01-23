@@ -9,7 +9,7 @@
 # Contact Vasilis if you need help with this
 
 # Constants
-SERVICE_NAME='lumino-dashboard'
+SERVICE_NAME='lumino-ui'
 
 # Inputs
 DEPLOY_ENV=$1

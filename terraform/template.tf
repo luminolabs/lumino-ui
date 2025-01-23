@@ -4,7 +4,7 @@ resource "google_compute_instance_template" "lumino_ui" {
   name         = "lumino-ui-${local.version}-tpl"
 
   disk {
-    source_image = "${var.region}-docker.pkg.dev/${var.resources_project_id}/lum-docker-images/lumino-dashboard:latest"
+    source_image = "${var.region}-docker.pkg.dev/${var.resources_project_id}/lum-docker-images/lumino-ui:latest"
     auto_delete  = true
     boot         = true
     device_name  = "lumino-ui-disk"
@@ -27,7 +27,7 @@ resource "google_compute_instance_template" "lumino_ui" {
   }
 
   metadata = {
-    startup-script = "/lumino-dashboard/scripts/mig-runtime/start-services.sh ui"
+    startup-script = "/lumino-ui/scripts/mig-runtime/start-services.sh ui"
     LUI_ENV = var.environment
   }
 

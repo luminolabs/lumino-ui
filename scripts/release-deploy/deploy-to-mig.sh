@@ -4,7 +4,7 @@
 # Run this script locally, after make-deployment.sh has been run
 
 # Constants
-SERVICE_NAME='lumino-dashboard'
+SERVICE_NAME='lumino-ui'
 VERSION=$(cat VERSION)  # If you'd like to roll back to a previous version, change the VERSION file to the desired version
 
 # Inputs

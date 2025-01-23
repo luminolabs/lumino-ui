@@ -25,7 +25,7 @@ This will trigger a rolling update on the MIG to replace the current VMs.
 New VMs will be created and will run the latest Docker image.
 
 ### Monitor the rolling update
-To monitor the rolling update, go to the [Google Cloud Console](https://console.cloud.google.com/compute/instanceGroups/details/us-central1-a/lumino-dashboard-prod)
+To monitor the rolling update, go to the [Google Cloud Console](https://console.cloud.google.com/compute/instanceGroups/details/us-central1-a/lumino-ui-{env})
 
 ### Deploy a Specific Version
 To deploy a specific version of the Docker image, run the following command:

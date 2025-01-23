@@ -10,7 +10,7 @@ set -e
 set -o allexport
 
 # Constants
-SERVICE_NAME='lumino-dashboard'
+SERVICE_NAME='lumino-ui'
 ENV_VAR_PREFIX='LUI'
 RESOURCES_PROJECT_ID="neat-airport-407301"
 REGION="us-central1"
