@@ -1,2 +1,2 @@
 bucket = "terraform-state"
-prefix = "prod"
+prefix = "lumino-ui/prod"
