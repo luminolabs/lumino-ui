@@ -105,7 +105,7 @@ Two-tiered approach:
 ### Commands
 ```bash
 # Initialize Terraform
-tofu init
+tofu init -backend-config=dev-backend.hcl -reconfigure
 
 # Plan changes
 tofu plan -var-file="{env}.tfvars" -var-file="secrets.tfvars"
