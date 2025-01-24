@@ -4,6 +4,9 @@
 ssh into the Scheduler VM and paste your private GitHub SSH key to the VM under `~/.ssh/id_rsa`.
 - Make sure the key is password protected; if not, you can add a password by running `ssh-keygen -p -f ~/.ssh/id_rsa`.
 - Make sure the key has the correct permissions by running `chmod 600 ~/.ssh/id_rsa`.
+- Make sure your user on VM is in the "builders" & "docker" groups(Reach out for help)
+- Make sure to run `gcloud auth configure-docker us-central1-docker.pkg.dev` on the VM.
+
 ```bash
 gcloud compute ssh --zone "us-central1-a" "scheduler-zen"
 ```
