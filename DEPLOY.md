@@ -4,6 +4,11 @@
 ssh into the Scheduler VM and paste your private GitHub SSH key to the VM under `~/.ssh/id_rsa`.
 - Make sure the key is password protected; if not, you can add a password by running `ssh-keygen -p -f ~/.ssh/id_rsa`.
 - Make sure the key has the correct permissions by running `chmod 600 ~/.ssh/id_rsa`.
+- Make sure your user on VM is in the "builders" & "docker" groups(Reach out for help)
+- Make sure to run `gcloud auth configure-docker us-central1-docker.pkg.dev` on the VM.
+- Editor Role on the deployment GCP project Ex:eng-ai-dev, Project IAM Admin, Secret Manager Secret Accessor
+- Artifact Registry Administrator and Project IAM Admin in the neat-airport project.
+
 ```bash
 gcloud compute ssh --zone "us-central1-a" "scheduler-zen"
 ```
@@ -25,7 +30,7 @@ This will trigger a rolling update on the MIG to replace the current VMs.
 New VMs will be created and will run the latest Docker image.
 
 ### Monitor the rolling update
-To monitor the rolling update, go to the [Google Cloud Console](https://console.cloud.google.com/compute/instanceGroups/details/us-central1-a/lumino-dashboard-prod)
+To monitor the rolling update, go to the [Google Cloud Console](https://console.cloud.google.com/compute/instanceGroups/details/us-central1-a/lumino-ui-{env})
 
 ### Deploy a Specific Version
 To deploy a specific version of the Docker image, run the following command:

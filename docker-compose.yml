@@ -1,6 +1,6 @@
 services:
-  dashboard:
-    image: us-central1-docker.pkg.dev/neat-airport-407301/lum-docker-images/lumino-dashboard:latest
+  ui:
+    image: us-central1-docker.pkg.dev/neat-airport-407301/lum-docker-images/lumino-ui:latest
 #    build: .
     command: yarn start
     volumes:

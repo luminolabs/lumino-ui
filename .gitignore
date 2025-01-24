@@ -55,3 +55,12 @@ build/
 repopack-output.txt
 .next
 .next/*
+
+# Terraform
+terraform/.terraform
+terraform/.terraform.lock.hcl
+terraform/.terraform.tfstate.lock.info
+terraform/terraform.tfstate.d
+terraform/secrets.tfvars
+terraform/*-config.env
+terraform/terraform.tfstate.d

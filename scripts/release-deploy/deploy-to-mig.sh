@@ -3,40 +3,33 @@
 # This script is used to restart the service on the MIG VMs, after make-deployment.sh has been run
 # Run this script locally, after make-deployment.sh has been run
 
+# Constants
+SERVICE_NAME='lumino-ui'
+VERSION=$(cat VERSION)  # If you'd like to roll back to a previous version, change the VERSION file to the desired version
+
+# Inputs
+DEPLOY_ENV=$1
+
+echo "Starting the deploy process for $SERVICE_NAME in $DEPLOY_ENV..."
+
+# Switching to the DEPLOY_ENV terraform workspace
+cd terraform
+tofu workspace select $DEPLOY_ENV
+cd ../
+
 # Import common functions and variables
-source ./scripts/utils.sh  # Sets $SERVICE_NAME
+source ./scripts/release-deploy/utils.sh
 
-echo "About to delete instances in the MIG group: $SERVICE_NAME-prod. Instances will be recreated automatically."
+# Make the current version the default version to be used by the MIG
+gcloud artifacts docker tags add \
+  $ARTIFACT_REPO_URL/$SERVICE_NAME:$VERSION \
+  $ARTIFACT_REPO_URL/$SERVICE_NAME:latest > /dev/null
 
-# If a version is provided, use it;
-# Set docker image tag to latest in artifact registry to the version provided
-if [ -n "$1" ]; then
-  VERSION=$1
-  echo "Updating service to use version: $VERSION"
-  gcloud artifacts docker tags add \
-    $ARTIFACT_REPO_URL/$SERVICE_NAME:$VERSION \
-    $ARTIFACT_REPO_URL/$SERVICE_NAME:latest > /dev/null
-else
-  VERSION=$(cat VERSION)
-  echo "No version provided, update latest tag to $VERSION"
-  gcloud artifacts docker tags add \
-    $ARTIFACT_REPO_URL/$SERVICE_NAME:$VERSION \
-    $ARTIFACT_REPO_URL/$SERVICE_NAME:latest > /dev/null
-fi
-
-# Get the current MIG target size (the desired number of instances)
-TARGET_SIZE=$(gcloud compute instance-groups managed describe $SERVICE_NAME-prod \
-  --project=$PROJECT_ID --zone=$WORK_ZONE \
-  --format="value(targetSize)")
-
-# Start the rolling update
 echo "Starting the rolling update."
-# Flags:
-# --max-unavailable=0: Our minimum number of instances is 1, so we can't have any unavailable
-# --min-ready=Xs: Wait for X seconds (see utils.sh) after an instance is ready before considering it available
-gcloud beta compute instance-groups managed rolling-action replace $SERVICE_NAME-prod \
-  --project=$PROJECT_ID --zone=$WORK_ZONE \
-  --max-unavailable=0 --min-ready=${BUILD_DURATION}s > /dev/null
+cd terraform
+tofu apply -var-file="$DEPLOY_ENV.tfvars" -var-file="secrets.tfvars"
+cd ../
 echo "Rolling update started and *this script will exit now* - it may take up to 5 minutes for the update to complete."
-echo "Monitor progress at: https://console.cloud.google.com/compute/instanceGroups/details/us-central1-a/$SERVICE_NAME-prod"
+echo "Monitor progress at: https://console.cloud.google.com/compute/instanceGroups/details/$ZONE/$SERVICE_NAME-mig"
+
 echo "Done."
