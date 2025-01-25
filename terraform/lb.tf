@@ -101,7 +101,7 @@ resource "google_compute_health_check" "lumino_ui" {
 
   http_health_check {
     port         = var.ui_internal_port
-    request_path = "/v1/health"
+    request_path = "/"
   }
 }
 
