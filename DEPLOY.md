@@ -22,6 +22,7 @@ gcloud compute ssh --zone "us-central1-a" "scheduler-zen"
   - Under the deployment projects (ex: eng-ai-dev):
     - Project IAM Admin
     - Secret Manager Secret Accessor
+    - Compute Instance Admin (v1)
 
 ## Building the Docker Image
 In your terminal, navigate to the root directory of this project and run the following command:
