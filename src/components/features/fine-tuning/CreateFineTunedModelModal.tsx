@@ -268,9 +268,9 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                   {selectedType}
                 </MenuButton>
                 <MenuList bg="white">
-                    <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="FULL" onClick={() => setSelectedType("FULL")}>
-                      FULL
-                    </MenuItem>
+                    {/*<MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="FULL" onClick={() => setSelectedType("FULL")}>*/}
+                    {/*  FULL*/}
+                    {/*</MenuItem>*/}
                     <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="LORA" onClick={() => setSelectedType("LORA")}>
                       LORA
                     </MenuItem>
