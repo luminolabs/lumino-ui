@@ -66,7 +66,7 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
   const [selectedBaseModel, setSelectedBaseModel] = useState<string>("");
   const [datasets, setDatasets] = useState<Datasets[]>([]);
   const [selectedDatasets, setSelectedDatasets] = useState<string>("");
-  const [selectedType, setSelectedType] = useState<string>("FULL");
+  const [selectedType, setSelectedType] = useState<string>("LORA");
   const [jobName, setJobName] = useState<string>("");
   const [batchSize, setBatchSize] = useState<number>(2);
   const [learningRate, setLearningRate] = useState<number>(0.003);
@@ -268,9 +268,6 @@ const CreateFineTunedModelModal: React.FC<CreateFineTunedModelModalProps> = ({
                   {selectedType}
                 </MenuButton>
                 <MenuList bg="white">
-                    {/*<MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="FULL" onClick={() => setSelectedType("FULL")}>*/}
-                    {/*  FULL*/}
-                    {/*</MenuItem>*/}
                     <MenuItem bg="white" color="black" _hover={{ bg: '#D6C6F6', color: '#4E00A6' }} key="LORA" onClick={() => setSelectedType("LORA")}>
                       LORA
                     </MenuItem>
