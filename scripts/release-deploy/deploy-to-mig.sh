@@ -14,7 +14,7 @@ echo "Starting the deploy process for $SERVICE_NAME in $DEPLOY_ENV..."
 
 # Switching to the DEPLOY_ENV terraform workspace
 cd terraform
-tofu workspace select $DEPLOY_ENV
+tofu init -backend-config=$DEPLOY_ENV-backend.hcl -reconfigure
 cd ../
 
 # Import common functions and variables

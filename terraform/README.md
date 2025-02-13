@@ -106,24 +106,12 @@ Two-tiered approach:
 2. Copy `secrets-example.tfvars` to `secrets.tfvars`
 3. Set required variables in both files
 
-### Commands
-```bash
-# Initialize Terraform
-tofu init -backend-config={env}-backend.hcl -reconfigure
-
-# Plan changes
-tofu plan -var-file="{env}.tfvars" -var-file="secrets.tfvars"
-
-# Apply changes
-tofu apply -var-file="{env}.tfvars" -var-file="secrets.tfvars"
-```
-
 ## Infrastructure Updates
 
 ### Version Control
 1. Update VERSION file with new version
-2. Build new Docker image using `make-deployment.sh`
-3. Deploy using `deploy-to-mig.sh`
+2. Build new Docker image using `make-deployment.sh {env}`
+3. Deploy using `deploy-to-mig.sh {env}`
 
 ### Rolling Updates Process
 1. New instance template created with version suffix
